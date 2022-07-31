@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "name": "cmake-ninja-qt-6.3.1",
+      // "includePath": [
+      //   "c:/Qt/6.3.1/mingw_64/include/**",
+      //   "c:/Qt/6.3.1/mingw_64/include/QtCore/**",
+      //   "c:/Qt/6.3.1/mingw_64/include/QtGui/**",
+      //   "${default}"
+      // ],
+      "intelliSenseMode": "${default}",
+      "compilerPath": "C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe",
+      "cStandard": "gnu17",
+      "cppStandard": "gnu++17",
+      "configurationProvider": "vector-of-bool.cmake-tools"
+    }
+  ],
+  "version": 4
+}

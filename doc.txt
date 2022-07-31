@@ -1,0 +1,37 @@
+gui
+communication interface
+control-logic interface
+data-collect interface
+data-display
+
+
+ICommunication {
+  setup()
+  std::variant getValues()
+  QSerialPort m_serial
+  3 x IController {
+        setup()
+        getValue()
+        setR()
+        setCorrection()
+        status()
+      }
+  status()
+
+  private:
+  updateValues()
+  getLastValues()
+}
+
+IProcess {
+  Icommunication *m_communication
+  void restart()
+  void stop()
+}
+
+IDataHolder {
+  addDataPoint()
+  load()
+  save()
+  m_data
+}
