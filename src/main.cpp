@@ -20,4 +20,5 @@ int main(int argc, char **argv)
 
   int b = 5;
   b = 7;
+  return 0;
 }

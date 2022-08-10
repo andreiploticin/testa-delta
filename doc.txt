@@ -6,7 +6,9 @@ data-display
 
 
 ICommunication {
-  setup()
+  connect()
+  disconnect();
+  sendCommend();
   std::variant getValues()
   QSerialPort m_serial
   3 x IController {
@@ -21,17 +23,30 @@ ICommunication {
   private:
   updateValues()
   getLastValues()
+
+  run()
 }
 
 IProcess {
   Icommunication *m_communication
   void restart()
   void stop()
+
+  run()
 }
 
 IDataHolder {
   addDataPoint()
-  load()
-  save()
+  load() in thread
+  save() {text format} in thread
+  export() in thread
   m_data
+  
+}
+
+IDataGraph {
+  setDataHolder () {set callback on data update}
+  
+  private:
+  updateData()
 }

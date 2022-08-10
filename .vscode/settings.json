@@ -65,6 +65,12 @@
     "fstream": "cpp",
     "iomanip": "cpp",
     "istream": "cpp",
-    "sstream": "cpp"
+    "sstream": "cpp",
+    "qserialport": "cpp",
+    "qapplication": "cpp",
+    "qserialportinfo": "cpp",
+    "qmodbusrtuserialserver": "cpp",
+    "codecvt": "cpp",
+    "source_location": "cpp"
   }
 }
