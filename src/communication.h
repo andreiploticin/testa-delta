@@ -15,8 +15,7 @@
 struct CommunicationSetupOptions {};
 
 class ICommunication
-    : public QObject
-    , public QRunnable {
+    : public QObject{
   Q_OBJECT
 public:
   //  using TSetupOptions       = typename Traits::SetupOptions;
@@ -31,12 +30,10 @@ public:
     emit finished();
   }
 
-  void run() override;
-
   virtual int                                    setup(CommunicationSetupOptions const &options) = 0;
   virtual void                                   setSets(std::vector<double> newSets)            = 0;
   virtual void                                   stopAll()                                       = 0;
-  virtual int                                    getStatus()                                     = 0;
+  virtual int                                    getStatus() const                               = 0;
   virtual std::vector<std::pair<double, double>> getLastValues()                                 = 0;
   virtual int                                    getNumberOfControllers() const                  = 0;
 
@@ -45,13 +42,18 @@ signals:
   void finished();
 
 protected:
+  bool                                      m_connectedStatus{false};
   std::vector<std::unique_ptr<IController>> m_controllers;
+
+  void setConnectedStatus(bool value) {
+    if (value == m_connectedStatus) {
+      return;
+    }
+    m_connectedStatus = value;
+    if (m_connectedStatus) {
+      emit connected();
+    }
+  }
 };
 
-inline void ICommunication::run() {
-  qInfo() << __PRETTY_FUNCTION__ << QThread::currentThread();
-  auto communicationLoop = std::make_unique<QEventLoop>();
-  connect(this, &ICommunication::finished, communicationLoop.get(), &QEventLoop::quit);
-  communicationLoop->exec();
-}
 #endif // COMMUNICATION_H

@@ -9,8 +9,10 @@
 
 //#include "helpers.hpp"
 //#include "src/process.hpp"
-#include "communication_helper.h"
-#include "src/mainwindow.h"
+//#include "communication_helper.h"
+//#include "src/mainwindow.h"
+#include "src/dataholder.h"
+#include "src/dataholderplot.h"
 
 class testBase : public ::testing::Test {
 protected:
@@ -28,11 +30,23 @@ protected:
   }
 };
 
-TEST_F(testBase, testApp) {
-  auto g_testCommunication = std::make_shared<TestCommunication>();
+//TEST_F(testBase, testApp) {
+//  auto g_testCommunication = std::make_shared<TestCommunication>();
 
-  auto appWindow = std::make_unique<MainWindow>(g_testCommunication);
-  appWindow->show();
+//  auto appWindow = std::make_unique<MainWindow>(g_testCommunication);
+//  appWindow->show();
 
+//  app->exec();
+//}
+
+TEST_F(testBase, testPlot) {
+  auto g_plot = std::make_shared<DataHolderPlot>();
+  auto g_dataHolder = std::make_shared<DataHolder>();
+
+  g_plot->setDataHolder(g_dataHolder);
+  g_dataHolder->load("c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-12_22-26-19_r171.dat");
+
+  g_plot->show();
+  g_plot->setGeometry(500,300,600,400);
   app->exec();
 }

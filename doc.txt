@@ -31,8 +31,13 @@ IProcess {
   Icommunication *m_communication
   void restart()
   void stop()
+  run() {
+    sleep 2;
+    m_dataHolder.addDataPoint
+  }
 
-  run()
+  private:
+  m_dataHolder
 }
 
 IDataHolder {
@@ -49,4 +54,19 @@ IDataGraph {
   
   private:
   updateData()
+}
+
+
+Plot : QCustomPlot {
+  setDataHolder()
+  setSettings()
+  getJpeg
+  getPdf
+
+  setViewMode(HoldAll, HoldX, Free)
+}
+
+Settings {
+  getPlotSettings()
+  setPlotSettings()
 }

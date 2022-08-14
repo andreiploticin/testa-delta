@@ -15,6 +15,10 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets SerialPort SerialBus)
 qt_standard_project_setup()
 
+
+# QCustomPlot lib
+add_subdirectory(libs/qcustomplot)
+
 #
 # copy builded .dll to .exe folder
 #
@@ -48,6 +52,14 @@ set(SORCES
     src/deltawidget.h
     src/deltawidget.cpp
     src/iprocess.h
+    src/process.h
+    src/process.cpp
+    src/dataholder.h
+    src/dataholder.cpp
+    src/dataholderplot.h
+    src/dataholderplot.cpp
+    src/common/filereader.h
+    src/common/filewriter.h
 )
 
 add_executable(${PROJECT_NAME}
@@ -58,7 +70,10 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Core
     Qt6::Widgets
+    qcustomplot
     )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE QCUSTOMPLOT_USE_LIBRARY)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Qt6Core_INCLUDE_DIRS})
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -94,7 +109,11 @@ target_link_libraries(tests PRIVATE
 #    Qt6::SerialPort
 #    Qt6::SerialBus
     gtest_main
-)
+    qcustomplot
+    )
+
+target_compile_definitions(tests PRIVATE QCUSTOMPLOT_USE_LIBRARY)
+
 
 set_target_properties(tests PROPERTIES
     WIN32_EXECUTABLE ON

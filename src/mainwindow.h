@@ -15,7 +15,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 public:
   explicit MainWindow(std::shared_ptr<ICommunication> communication, QWidget *parent = nullptr);
-
+  ~MainWindow();
 private:
   void                            showControllersWidget();
   std::shared_ptr<ICommunication> m_communication;
@@ -23,6 +23,8 @@ private:
   QVBoxLayout                    *m_mainLay{nullptr};
   std::vector<DeltaWidget *>      m_controllerWidgets;
   QTimer                         *m_updateValuesTimer{nullptr};
+  QPushButton                    *m_startBtn{nullptr};
+  QPushButton                    *m_stopBtn{nullptr};
 };
 
 #endif // MAINWINDOW_H

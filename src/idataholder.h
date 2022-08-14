@@ -1,29 +1,25 @@
 #ifndef IDATAHOLDER_HPP
 #define IDATAHOLDER_HPP
 
+#include <QObject>
 #include <QString>
-#include <mutex>
-#include <thread>
-#include <vector>
+#include <QVector>
 
-class IDataHolder {
+class IDataHolder : public QObject {
+  Q_OBJECT
 public:
-  virtual ~IDataHolder();
-  virtual void addDataPoint(std::vector<double>) = 0;
-  virtual void load(QString const &)             = 0;
-  virtual void save(QString const &)             = 0;
-  virtual void exportToFile(QString const &)     = 0;
-
-protected:
-  std::mutex                       m_dataMutex;
-  std::thread                      m_thread;
-  std::vector<std::vector<double>> m_data;
-};
-
-IDataHolder::~IDataHolder() {
-  if (m_thread.joinable()) {
-    m_thread.join();
+  IDataHolder(QObject *parent = nullptr) : QObject(parent) {
   }
-}
+  virtual ~IDataHolder()                                           = default;
+  virtual void addDataPoint(uint64_t, QVector<double>)             = 0;
+  virtual int  load(QString const &)                               = 0;
+  virtual int  save(QString const &, bool temporary = false)       = 0;
+  virtual void exportToFile(QString const &)                       = 0;
+  virtual void setAutoSave(bool value, uint32_t periodInSec = 120) = 0;
 
+  virtual QVector<QVector<double>> const &getData() const = 0;
+  virtual QVector<double> const          &getTime() const = 0;
+signals:
+  void pointAdded();
+};
 #endif // IDATAHOLDER_HPP
