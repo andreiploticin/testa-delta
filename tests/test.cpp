@@ -13,6 +13,7 @@
 //#include "src/mainwindow.h"
 #include "src/dataholder.h"
 #include "src/dataholderplot.h"
+#include "src/settings.h"
 
 class testBase : public ::testing::Test {
 protected:
@@ -42,6 +43,7 @@ protected:
 TEST_F(testBase, testPlot) {
   auto g_plot = std::make_shared<DataHolderPlot>();
   auto g_dataHolder = std::make_shared<DataHolder>();
+  Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
 
   g_plot->setDataHolder(g_dataHolder);
   g_dataHolder->load("c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-12_22-26-19_r171.dat");

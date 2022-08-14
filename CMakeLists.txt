@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # QT setup
- set(CMAKE_AUTOMOC ON)
-# set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 set(CMAKE_PREFIX_PATH "C:/Qt/6.3.1/mingw_64/lib/cmake/")
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets SerialPort SerialBus)
@@ -44,6 +44,7 @@ enable_testing()
 
 # ----------------- main app
 set(SORCES
+    content.qrc
     src/communication.h
     src/controller.h
     src/idataholder.h
@@ -60,6 +61,8 @@ set(SORCES
     src/dataholderplot.cpp
     src/common/filereader.h
     src/common/filewriter.h
+    src/settings.h
+    src/settings.cpp
 )
 
 add_executable(${PROJECT_NAME}
