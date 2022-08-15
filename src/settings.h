@@ -53,15 +53,20 @@ public:
     return *m_instance;
   }
 
-  void setFilePath(QString const &path);
-  void save();
+  void        setFilePath(QString const &path);
+  void        save();
+  QVariantMap getSettingsMap() const {
+    return m_settingsMap;
+  }
+
+protected:
+  QVariantMap m_settingsMap;
 
 private:
   void load();
   explicit Settings(QObject *parent = nullptr);
   QString                          m_filePath;
   static std::unique_ptr<Settings> m_instance;
-  QVariant                         m_settingsMap;
 signals:
 };
 

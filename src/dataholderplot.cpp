@@ -1,6 +1,20 @@
 #include "dataholderplot.h"
 
-DataHolderPlot::DataHolderPlot(QWidget *parent) : QCustomPlot(parent) {
+Legend::Legend(std::shared_ptr<DataHolderPlot> plot) {
+  m_plot = plot;
+  setVisible(false);
+}
+
+void Legend::setVisible(bool value) {
+}
+
+void Legend::setValuesVisible(bool value) {
+}
+
+void Legend::setup() {
+}
+
+DataHolderPlot::DataHolderPlot(QWidget *parent) : QCustomPlot(parent), m_legend(std::shared_ptr<DataHolderPlot>(this)) {
   QSharedPointer<QCPAxisTickerDateTime> timeTicker(new QCPAxisTickerDateTime);
   timeTicker->setDateTimeFormat("hh:mm:ss");
   xAxis->setTicker(timeTicker);
@@ -25,6 +39,18 @@ void DataHolderPlot::setDataHolder(std::shared_ptr<IDataHolder> dataHolder) {
 }
 
 void DataHolderPlot::setSettings(QVariant settings) {
+  if (!settings.isValid()) {
+    return;
+  }
+  for (int i = 0; i < qMin(graphCount(), settings.toList().size()); ++i) {
+    auto   map = settings.toList()[i].toMap();
+    QPen   pen;
+    QColor color(map["color"].toString());
+    pen.setColor(color);
+    qDebug() << color;
+    graph(i)->setPen(pen);
+  }
+  replot();
 }
 
 void DataHolderPlot::setViewMode(ViewMode mode) {
@@ -47,6 +73,17 @@ void DataHolderPlot::enableCursor(bool value) {
 
   m_cursorIsOn = value;
   emit cursorEnabled(m_cursorIsOn);
+}
+
+void DataHolderPlot::enableLegend(bool value) {
+  if (m_legendIsOn == value) {
+    return;
+  }
+
+  // action
+
+  m_legendIsOn = value;
+  emit legendEnabled(m_legendIsOn);
 }
 
 void DataHolderPlot::replotDataUpdated() {

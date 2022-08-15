@@ -48,6 +48,7 @@ TEST_F(testBase, testPlot) {
   g_plot->setDataHolder(g_dataHolder);
   g_dataHolder->load("c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-12_22-26-19_r171.dat");
 
+  g_plot->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
   g_plot->show();
   g_plot->setGeometry(500,300,600,400);
   app->exec();
