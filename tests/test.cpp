@@ -60,5 +60,8 @@ TEST_F(testBase, testCommunication) {
   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
   g_comm->setSettings(Settings::getInstance().getSettingsMap()["communication"]);
   g_comm->establishConnection({});
+  QTimer::singleShot(4000, [&g_comm]() {
+    g_comm->setSets({1000});
+  });
   app->exec();
 }

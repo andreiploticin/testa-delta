@@ -45,6 +45,19 @@ void Rs485Comminication::closeConnection() {
 }
 
 void Rs485Comminication::setSets(std::vector<double> newSets) {
+  if (newSets.size() != m_addresses.size()) {
+    qInfo() << "newSets.size() != m_addresses.size()";
+    return;
+  }
+  for (int i = 0; i < newSets.size(); ++i) {
+    auto            device = m_addresses[i];
+    QModbusDataUnit req{QModbusDataUnit::HoldingRegisters, 0x1001, 1};
+    req.setValue(0, 10*newSets[i]);
+    auto replay = m_modbusDevice->sendWriteRequest(req, device);
+    if (nullptr != replay) {
+      connect(replay, &QModbusReply::finished, this, &Rs485Comminication::onReadReady);
+    }
+  }
 }
 
 void Rs485Comminication::stopAll() {
@@ -71,14 +84,14 @@ void Rs485Comminication::onReadReady() {
       const QString entry = tr("Device: %1, Address: %2, Value: %3")
                               .arg(reply->serverAddress())
                               .arg(unit.startAddress() + i)
-                              .arg(QString::number(unit.value(i), 10));
+                              .arg(0.1 * unit.value(i));
       qInfo() << entry;
       if (m_addresses.contains(reply->serverAddress())) {
         auto &pair = m_values[m_addresses.indexOf(reply->serverAddress())];
         if (0x1000 == (unit.startAddress() + i)) {
-          pair.first = unit.value(i);
+          pair.first = 0.1 * unit.value(i);
         } else if (0x1001 == (unit.startAddress() + i)) {
-          pair.second = unit.value(i);
+          pair.second = 0.1 * unit.value(i);
         }
       }
     }
