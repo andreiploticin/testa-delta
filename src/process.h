@@ -4,7 +4,7 @@
 #include <QTimer>
 #include <thread>
 
-#include "communication.h"
+#include "icommunication.h"
 #include "iprocess.h"
 
 class Process : public IProcess {

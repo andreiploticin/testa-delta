@@ -1,5 +1,15 @@
 {
     "setting1": 1.34,
+    "communication":
+    {
+      "serial_port": "COM3",
+      "delta_address":
+      [
+        2
+      ],
+      "max_timeout_errors": 3,
+      "max_errors": 10
+    },
     "plotLines":
     [
       {

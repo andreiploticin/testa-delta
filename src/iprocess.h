@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "src/communication.h"
+#include "src/icommunication.h"
 #include "src/idataholder.h"
 
 class IProcess : public QObject {

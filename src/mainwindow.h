@@ -7,7 +7,7 @@
 #include <QTimer>
 #include <memory>
 
-#include "src/communication.h"
+#include "src/icommunication.h"
 #include "src/deltawidget.h"
 #include "src/iprocess.h"
 

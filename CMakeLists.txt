@@ -45,7 +45,7 @@ enable_testing()
 # ----------------- main app
 set(SORCES
     content.qrc
-    src/communication.h
+    src/icommunication.h
     src/controller.h
     src/idataholder.h
     src/mainwindow.h
@@ -63,6 +63,8 @@ set(SORCES
     src/common/filewriter.h
     src/settings.h
     src/settings.cpp
+    src/rs485comminication.h
+    src/rs485comminication.cpp
 )
 
 add_executable(${PROJECT_NAME}
@@ -73,6 +75,8 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Core
     Qt6::Widgets
+    Qt6::SerialPort
+    Qt6::SerialBus
     qcustomplot
     )
 
@@ -109,8 +113,8 @@ add_executable(tests
 target_link_libraries(tests PRIVATE
     Qt6::Core
     Qt6::Widgets
-#    Qt6::SerialPort
-#    Qt6::SerialBus
+    Qt6::SerialPort
+    Qt6::SerialBus
     gtest_main
     qcustomplot
     )

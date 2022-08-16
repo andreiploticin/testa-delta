@@ -4,7 +4,7 @@
 #include <QTimer>
 #include <random>
 
-#include "src/communication.h"
+#include "src/icommunication.h"
 
 static std::mt19937                           generator(0);
 static std::uniform_real_distribution<double> distribution(1000, 1200);

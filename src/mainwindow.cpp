@@ -24,7 +24,7 @@ MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *p
   //  m_communication.get()->moveToThread(communicationThread);
   //  communicationThread->start();
 
-  m_communication->setup(CommunicationSetupOptions{});
+  m_communication->establishConnection(CommunicationSetupOptions{});
 
   connect(m_startBtn, &QPushButton::clicked, this, [this] {
     if ((nullptr != m_process.get()) && (nullptr != m_communication.get()) && (1 == m_communication->getStatus())) {

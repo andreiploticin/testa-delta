@@ -13,6 +13,7 @@
 //#include "src/mainwindow.h"
 #include "src/dataholder.h"
 #include "src/dataholderplot.h"
+#include "src/rs485comminication.h"
 #include "src/settings.h"
 
 class testBase : public ::testing::Test {
@@ -31,8 +32,8 @@ protected:
   }
 };
 
-//TEST_F(testBase, testApp) {
-//  auto g_testCommunication = std::make_shared<TestCommunication>();
+// TEST_F(testBase, testApp) {
+//   auto g_testCommunication = std::make_shared<TestCommunication>();
 
 //  auto appWindow = std::make_unique<MainWindow>(g_testCommunication);
 //  appWindow->show();
@@ -40,16 +41,24 @@ protected:
 //  app->exec();
 //}
 
-TEST_F(testBase, testPlot) {
-  auto g_plot = std::make_shared<DataHolderPlot>();
-  auto g_dataHolder = std::make_shared<DataHolder>();
+// TEST_F(testBase, testPlot) {
+//   auto g_plot = std::make_shared<DataHolderPlot>();
+//   auto g_dataHolder = std::make_shared<DataHolder>();
+//   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
+
+//  g_plot->setDataHolder(g_dataHolder);
+//  g_dataHolder->load("c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-12_22-26-19_r171.dat");
+
+//  g_plot->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
+//  g_plot->show();
+//  g_plot->setGeometry(500,300,600,400);
+//  app->exec();
+//}
+
+TEST_F(testBase, testCommunication) {
+  auto g_comm = std::make_shared<Rs485Comminication>();
   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
-
-  g_plot->setDataHolder(g_dataHolder);
-  g_dataHolder->load("c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-12_22-26-19_r171.dat");
-
-  g_plot->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
-  g_plot->show();
-  g_plot->setGeometry(500,300,600,400);
+  g_comm->setSettings(Settings::getInstance().getSettingsMap()["communication"]);
+  g_comm->establishConnection({});
   app->exec();
 }

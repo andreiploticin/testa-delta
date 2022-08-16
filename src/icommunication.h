@@ -14,15 +14,14 @@
 
 struct CommunicationSetupOptions {};
 
-class ICommunication
-    : public QObject{
+class ICommunication : public QObject {
   Q_OBJECT
 public:
   //  using TSetupOptions       = typename Traits::SetupOptions;
   //  using TController         = typename Traits::ControllerType;
   //  using CommunicationStatus = std::pair<int, std::vector<int>>;
 
-  ICommunication() : QObject(nullptr) {
+  ICommunication(QObject *parent = nullptr) : QObject(parent) {
     qInfo() << __PRETTY_FUNCTION__ << QThread::currentThread();
   }
   virtual ~ICommunication() {
@@ -30,12 +29,14 @@ public:
     emit finished();
   }
 
-  virtual int                                    setup(CommunicationSetupOptions const &options) = 0;
-  virtual void                                   setSets(std::vector<double> newSets)            = 0;
-  virtual void                                   stopAll()                                       = 0;
-  virtual int                                    getStatus() const                               = 0;
-  virtual std::vector<std::pair<double, double>> getLastValues()                                 = 0;
-  virtual int                                    getNumberOfControllers() const                  = 0;
+  virtual int                                    establishConnection(CommunicationSetupOptions const &options) = 0;
+  virtual void                                   closeConnection()                                             = 0;
+  virtual void                                   setSets(std::vector<double> newSets)                          = 0;
+  virtual void                                   stopAll()                                                     = 0;
+  virtual int                                    getStatus() const                                             = 0;
+  virtual std::vector<std::pair<double, double>> getLastValues()                                               = 0;
+  virtual int                                    getNumberOfControllers() const                                = 0;
+  virtual void                                   setSettings(QVariant settings)                                = 0;
 
 signals:
   void connected();
