@@ -1,4 +1,4 @@
-#include "../src/communication.hpp"
+#include "../src/icommunication.hpp"
 #include "../src/controller.hpp"
 #include "../src/idataholder.hpp"
 
@@ -18,7 +18,7 @@ struct TestCommunicationTraits {
   using ControllerType      = TestController;
 };
 
-class TestCommunication : public CommunicationInterface<TestCommunicationTraits> {
+class TestCommunication : public ICommunicationInterface<TestCommunicationTraits> {
 public:
   TestCommunication() {
     std::cout << "TestCommunication" << std::endl;

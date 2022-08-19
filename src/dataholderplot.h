@@ -10,7 +10,7 @@ class DataHolderPlot;
 
 class Legend {
 public:
-  explicit Legend(std::shared_ptr<DataHolderPlot> plot);
+  explicit Legend(DataHolderPlot *plot);
   void setVisible(bool value);
   void setValuesVisible(bool value);
   /**
@@ -19,13 +19,23 @@ public:
    *
    */
   void setup();
+  void action();
+  void setValues(QVector<double> values);
+  void setCursorPosition();
 
 private:
-  std::shared_ptr<DataHolderPlot> m_plot;
+  QCPLegend                *m_leg{nullptr};
+  DataHolderPlot *const     m_plot{nullptr};
+  QCPLayer                 *m_valuesLay{nullptr};
+  QVector<QCPTextElement *> m_values;
+  bool                      m_valuesVisible{false};
+  QCPItemStraightLine      *cursor{nullptr};
 };
 
 class DataHolderPlot : public QCustomPlot {
   Q_OBJECT
+  friend Legend;
+
 public:
   enum ViewMode {
     HOLD_ALL = 1,
@@ -33,12 +43,13 @@ public:
     FREE     = 3
   };
   explicit DataHolderPlot(QWidget *parent = nullptr);
-  ~DataHolderPlot();
+  ~DataHolderPlot() override;
   void setDataHolder(std::shared_ptr<IDataHolder> dataHolder);
   void setSettings(QVariant settings);
   void setViewMode(ViewMode mode);
   void enableCursor(bool value = true);
   void enableLegend(bool value = true);
+  void action();
 
 signals:
   void viewModeChanged(DataHolderPlot::ViewMode);

@@ -15,7 +15,7 @@ public:
   TestCommunication() : ICommunication() {
   }
 
-  int setup(CommunicationSetupOptions const &options) override {
+  int establishConnection(CommunicationSetupOptions const &options) override {
     QTimer::singleShot(1000, [this]() {
       this->setConnectedStatus(true);
       m_updateTimer = new QTimer(this);
@@ -25,9 +25,9 @@ public:
         this,
         [this]() {
           for (int i = 0; i < getNumberOfControllers(); ++i) {
-            std::pair<double, double> pair1{1000, distribution(generator)};
-            std::pair<double, double> pair2{1050, distribution(generator)};
-            std::pair<double, double> pair3{1100, distribution(generator)};
+            std::pair<double, double> pair1{m_sets[0], distribution(generator)};
+            std::pair<double, double> pair2{m_sets[1], distribution(generator)};
+            std::pair<double, double> pair3{m_sets[2], distribution(generator)};
             m_values = {pair1, pair2, pair3};
           }
         },
@@ -37,6 +37,7 @@ public:
     return 0;
   }
   void setSets(std::vector<double> newSets) override {
+    m_sets = newSets;
   }
   void stopAll() override {
   }
@@ -54,6 +55,18 @@ public:
 private:
   std::vector<std::pair<double, double>> m_values;
   QTimer                                *m_updateTimer{nullptr};
+  std::vector<double>                    m_sets{0, 0, 0};
+
+  // ICommunication interface
+public:
+  void closeConnection() override;
+  void setSettings(QVariant settings) override;
 };
+
+void TestCommunication::closeConnection() {
+}
+
+void TestCommunication::setSettings(QVariant settings) {
+}
 
 #endif // COMMUNICATION_HELPER_H

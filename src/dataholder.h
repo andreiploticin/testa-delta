@@ -18,6 +18,8 @@ public:
   int                             save(QString const &, bool temporary = false) override;
   void                            exportToFile(QString const &) override;
   void                            setAutoSave(bool value, uint32_t periodInSec = 120) override;
+  QVector<double>                 getDataAtTime(double timer) const override;
+  QVector<double>                 getDataAtSample(uint64_t sample) const override;
   QVector<QVector<double>> const &getData() const override {
     return m_data;
   }
@@ -40,6 +42,8 @@ private:
   QTimer     *m_autosaveTimer{nullptr};
   static QDir m_saveDir;
   uint32_t    m_lastSaveRev{0};
+
+public:
 };
 
 #endif // DATAHOLDER_H

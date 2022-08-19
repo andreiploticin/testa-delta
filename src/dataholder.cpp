@@ -37,6 +37,22 @@ void DataHolder::addDataPoint(uint64_t pointTime, QVector<double> point) {
   for (int i = 0; i < point.size(); ++i) {
     m_data[i].push_back(point[i]);
   }
+  emit pointAdded();
+}
+
+QVector<double> DataHolder::getDataAtTime(double timer) const {
+  return getDataAtSample(0);
+}
+
+QVector<double> DataHolder::getDataAtSample(uint64_t sample) const {
+  if (m_time.empty() || (sample > m_time.size())) {
+    return {};
+  }
+  QVector<double> ret;
+  for (int i{0}; i < m_data.size(); ++i) {
+    ret.push_back(m_data[i][sample]);
+  }
+  return ret;
 }
 
 int DataHolder::load(QString const &filePath) {

@@ -9,6 +9,9 @@
 class Rs485Comminication : public ICommunication {
 public:
   Rs485Comminication(QObject *parent = nullptr);
+  ~Rs485Comminication() override {
+    qInfo() << __PRETTY_FUNCTION__;
+  }
 
   // ICommunication interface
 public:

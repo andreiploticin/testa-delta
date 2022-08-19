@@ -1,20 +1,61 @@
 #include "dataholderplot.h"
 
-Legend::Legend(std::shared_ptr<DataHolderPlot> plot) {
-  m_plot = plot;
-  setVisible(false);
+Legend::Legend(DataHolderPlot *plot) : m_plot{plot}, m_leg{plot->legend} {
+  setVisible(true);
+  m_leg->setBrush(QBrush(QColor(255, 255, 255, 230)));
+  m_plot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft | Qt::AlignTop);
+  m_valuesLay = m_plot->layer("legend");
+  m_valuesLay->setMode(QCPLayer::LayerMode::lmBuffered);
+
+  cursor = new QCPItemStraightLine(m_plot);
+  m_plot->addLayer("cursor");
+  m_plot->layer("cursor")->setMode(QCPLayer::LayerMode::lmBuffered);
+  cursor->setLayer("cursor");
+  //  m_plot->moveLayer(valuesLay, m_plot->layer("legend"));
 }
 
 void Legend::setVisible(bool value) {
+  m_leg->setVisible(value);
 }
 
 void Legend::setValuesVisible(bool value) {
+  if (value == m_valuesVisible) {
+    return;
+  }
+  m_valuesVisible = value;
+  if (m_valuesVisible) {
+    m_valuesLay->replot();
+  }
 }
 
 void Legend::setup() {
+  auto itemCount = m_plot->graphCount();
+  for (int i{0}; i < itemCount; ++i) {
+    auto item = new QCPTextElement(m_plot, "0.0");
+    item->setTextColor(Qt::black);
+    m_leg->addElement(i, 2, item);
+    item->setLayer(m_valuesLay);
+    //    item->setVisible(false);
+    qInfo() << item->layer()->name();
+    m_values.push_back(item);
+  }
 }
 
-DataHolderPlot::DataHolderPlot(QWidget *parent) : QCustomPlot(parent), m_legend(std::shared_ptr<DataHolderPlot>(this)) {
+void Legend::action() {
+  setValuesVisible(true);
+  setValues(m_plot->m_dataHolder->getDataAtSample(0));
+}
+
+void Legend::setValues(QVector<double> values) {
+  for (int i{0}; i < qMin(values.size(), m_values.size()); ++i) {
+    m_values[i]->setText(QString::number(values[i], 'f', 1));
+  }
+  if (m_valuesVisible) {
+    m_valuesLay->replot();
+  }
+}
+
+DataHolderPlot::DataHolderPlot(QWidget *parent) : QCustomPlot(parent), m_legend(this) {
   QSharedPointer<QCPAxisTickerDateTime> timeTicker(new QCPAxisTickerDateTime);
   timeTicker->setDateTimeFormat("hh:mm:ss");
   xAxis->setTicker(timeTicker);
@@ -49,7 +90,9 @@ void DataHolderPlot::setSettings(QVariant settings) {
     pen.setColor(color);
     qDebug() << color;
     graph(i)->setPen(pen);
+    graph(i)->setName(map["label"].toString());
   }
+  m_legend.setup();
   replot();
 }
 
@@ -84,6 +127,10 @@ void DataHolderPlot::enableLegend(bool value) {
 
   m_legendIsOn = value;
   emit legendEnabled(m_legendIsOn);
+}
+
+void DataHolderPlot::action() {
+  m_legend.action();
 }
 
 void DataHolderPlot::replotDataUpdated() {

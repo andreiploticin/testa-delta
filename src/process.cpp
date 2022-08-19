@@ -7,7 +7,7 @@ Process::Process(std::shared_ptr<ICommunication> com, QObject *parent) : IProces
 
   m_runTimer = new QTimer(this);
   connect(m_runTimer, &QTimer::timeout, this, [this] {
-    if (!m_stopRun) {
+    if (!m_stopRun && m_runStatus) {
       if ((nullptr != m_dataHolder.get()) && (nullptr != m_communication.get())) {
         auto                lastPointsPairs = m_communication->getLastValues();
         QVector<double> lastPointVector{};
@@ -33,6 +33,7 @@ void Process::restart(std::vector<double> newSets) {
 }
 
 void Process::stop() {
+  m_dataHolder->setAutoSave(false);
   this->m_communication->stopAll();
   m_runTimer->stop();
   setRunStatus(false);

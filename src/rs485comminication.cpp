@@ -22,7 +22,8 @@ int Rs485Comminication::establishConnection(CommunicationSetupOptions const &opt
   m_errorCount          = 0U;
   m_errorCountTimeout   = 0U;
 
-  auto portName = Settings::getInstance().getSettingsMap()["communication"].toMap()["serial_port"].toString();
+  auto portName
+    = Settings::getInstance().getSettingsMap()["settings"].toMap()["communication"].toMap()["serial_port"].toString();
   m_modbusDevice->setConnectionParameter(QModbusDevice::SerialPortNameParameter, portName);
   m_modbusDevice->setConnectionParameter(QModbusDevice::SerialParityParameter, QSerialPort::NoParity);
   m_modbusDevice->setConnectionParameter(QModbusDevice::SerialBaudRateParameter, QSerialPort::Baud9600);
@@ -52,7 +53,7 @@ void Rs485Comminication::setSets(std::vector<double> newSets) {
   for (int i = 0; i < newSets.size(); ++i) {
     auto            device = m_addresses[i];
     QModbusDataUnit req{QModbusDataUnit::HoldingRegisters, 0x1001, 1};
-    req.setValue(0, 10*newSets[i]);
+    req.setValue(0, 10 * newSets[i]);
     auto replay = m_modbusDevice->sendWriteRequest(req, device);
     if (nullptr != replay) {
       connect(replay, &QModbusReply::finished, this, &Rs485Comminication::onReadReady);
@@ -65,7 +66,7 @@ void Rs485Comminication::stopAll() {
 }
 
 int Rs485Comminication::getStatus() const {
-  return 0;
+  return static_cast<int>(QModbusDevice::State::ConnectedState == m_modbusState);
 }
 
 std::vector<std::pair<double, double>> Rs485Comminication::getLastValues() {
@@ -122,15 +123,14 @@ void Rs485Comminication::onErrorOccured(QModbusDevice::Error error) {
   qInfo() << error;
 
   if (QModbusDevice::Error::TimeoutError == error) {
-    if ((++m_errorCountTimeout)
-        >= Settings::getInstance().getSettingsMap()["communication"].toMap()["max_timeout_errors"].toUInt()) {
+    if ((++m_errorCountTimeout) >= m_settings["max_timeout_errors"].toUInt()) {
       qInfo() << "RS-485 communication timeout error limit reached:" << m_errorCountTimeout;
       handleErrorLimitation = true;
       closeConnection();
       return;
     }
   }
-  if (m_errorCount >= Settings::getInstance().getSettingsMap()["communication"].toMap()["max_errors"].toUInt()) {
+  if (m_errorCount >= m_settings["max_errors"].toUInt()) {
     qInfo() << "RS-485 communication error limit reached:" << m_errorCount;
     handleErrorLimitation = true;
     closeConnection();

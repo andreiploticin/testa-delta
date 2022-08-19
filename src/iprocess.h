@@ -17,6 +17,7 @@ public:
   }
   virtual void restart(std::vector<double> newSets) = 0;
   virtual void stop()                               = 0;
+  virtual int  getStatus() const                    = 0;
   virtual ~IProcess() {
     qInfo() << __PRETTY_FUNCTION__ << QThread::currentThread();
     stopRun();

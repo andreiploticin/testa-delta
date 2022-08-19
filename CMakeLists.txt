@@ -59,12 +59,18 @@ set(SORCES
     src/dataholder.cpp
     src/dataholderplot.h
     src/dataholderplot.cpp
+    src/dataholderplotwidget.h
+    src/dataholderplotwidget.cpp
     src/common/filereader.h
     src/common/filewriter.h
     src/settings.h
     src/settings.cpp
     src/rs485comminication.h
     src/rs485comminication.cpp
+    src/correctionwidget.h
+    src/correctionwidget.cpp
+    src/settingsdialog.h
+    src/settingsdialog.cpp
 )
 
 add_executable(${PROJECT_NAME}

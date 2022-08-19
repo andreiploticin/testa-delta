@@ -13,15 +13,19 @@ public:
   ~Process() override {
     qInfo() << __PRETTY_FUNCTION__ << QThread::currentThread();
   }
-  void     restart(std::vector<double> newSets) override;
-  void     stop() override;
-  void     run() override;
-  uint64_t a = 0;
+  void restart(std::vector<double> newSets) override;
+  void stop() override;
+  void run() override;
+  int  getStatus() const override {
+    return static_cast<int>(m_runStatus);
+  }
+  std::shared_ptr<IDataHolder> getDataHolder() const {
+    return m_dataHolder;
+  }
 
 private:
   bool                         m_runStatus{false};
   void                         setRunStatus(bool value);
-  std::shared_ptr<IDataHolder> m_dataHolder;
   QTimer                      *m_runTimer{nullptr};
 };
 

@@ -7,7 +7,7 @@
 #include <QRunnable>
 #include <QThread>
 #include <memory>
-#include <tuple>
+#include <QVariant>
 #include <vector>
 
 #include "controller.h"
