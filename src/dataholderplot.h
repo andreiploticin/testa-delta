@@ -19,17 +19,20 @@ public:
    *
    */
   void setup();
+
+  void clear();
   void action();
   void setValues(QVector<double> values);
-  void setCursorPosition();
+  void setCursorPosition(double timeValue);
 
 private:
   QCPLegend                *m_leg{nullptr};
   DataHolderPlot *const     m_plot{nullptr};
   QCPLayer                 *m_valuesLay{nullptr};
+  QCPLayer                 *m_cursorLay{nullptr};
   QVector<QCPTextElement *> m_values;
   bool                      m_valuesVisible{false};
-  QCPItemStraightLine      *cursor{nullptr};
+  QCPItemStraightLine      *m_cursor{nullptr};
 };
 
 class DataHolderPlot : public QCustomPlot {
@@ -49,12 +52,19 @@ public:
   void setViewMode(ViewMode mode);
   void enableCursor(bool value = true);
   void enableLegend(bool value = true);
+  void switchCursor() {
+    enableCursor(!m_cursorIsOn);
+  }
   void action();
 
 signals:
   void viewModeChanged(DataHolderPlot::ViewMode);
   void cursorEnabled(bool);
   void legendEnabled(bool);
+
+  // QWidget interface
+protected:
+  void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
   /**

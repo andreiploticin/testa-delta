@@ -18,6 +18,7 @@ public:
 
 private:
   DataHolderPlot *m_plot{nullptr};
+  QPushButton    *m_cursorBtn{nullptr};
 };
 
 #endif // DATAHOLDERPLOTWIDGET_H

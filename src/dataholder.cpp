@@ -40,12 +40,15 @@ void DataHolder::addDataPoint(uint64_t pointTime, QVector<double> point) {
   emit pointAdded();
 }
 
-QVector<double> DataHolder::getDataAtTime(double timer) const {
-  return getDataAtSample(0);
+QVector<double> DataHolder::getDataAtTime(double time) const {
+  auto pos    = std::upper_bound(m_time.cbegin(), m_time.cend(), time);
+  auto sample = pos - m_time.cbegin();
+
+  return getDataAtSample(sample);
 }
 
 QVector<double> DataHolder::getDataAtSample(uint64_t sample) const {
-  if (m_time.empty() || (sample > m_time.size())) {
+  if (m_time.empty() || (sample >= m_time.size())) {
     return {};
   }
   QVector<double> ret;

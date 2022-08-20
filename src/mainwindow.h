@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "src/dataholder.h"
-#include "src/dataholderplot.h"
+#include "src/dataholderplotwidget.h"
 #include "src/deltawidget.h"
 #include "src/icommunication.h"
 #include "src/iprocess.h"
@@ -21,14 +21,14 @@ public:
   ~MainWindow() override;
 
 private:
-  void                            initGui();
-  void                            enableControlWidgets(bool value = true);
-  void                            handleProcessChanges(bool runStatus);
+  void initGui();
+  void enableControlWidgets(bool value = true);
+  void handleProcessChanges(bool runStatus);
 
   QAction *m_openSettingsAction{nullptr};
-  void openSettings();
+  void     openSettings();
   QAction *m_openDataAction{nullptr};
-  void openData();
+  void     openData();
 
   std::shared_ptr<ICommunication> m_communication;
   std::unique_ptr<IProcess>       m_process;
@@ -39,7 +39,7 @@ private:
   QLabel                         *m_statusLabel{nullptr};
   QPushButton                    *m_startBtn{nullptr};
   QPushButton                    *m_stopBtn{nullptr};
-  DataHolderPlot                 *m_plot{nullptr};
+  DataHolderPlotWidget           *m_plotWidget{nullptr};
   bool                            m_controlWidgetsEnabled{true};
 };
 

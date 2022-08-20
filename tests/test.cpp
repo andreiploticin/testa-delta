@@ -47,7 +47,7 @@ protected:
   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
 
   g_plotWidget->setDataHolder(g_dataHolder);
-  g_dataHolder->load("c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-12_22-26-19_r171.dat");
+  g_dataHolder->load("c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-19_17-46-27_r22.dat");
 
   g_plotWidget->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
   g_plotWidget->show();

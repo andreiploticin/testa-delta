@@ -27,7 +27,7 @@ MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *p
       // process create dataHolder
       m_process->restart(newSets);
       // we work with created or old dataHolder
-      m_plot->setDataHolder(m_process->getDataHolderPtr());
+      m_plotWidget->setDataHolder(m_process->getDataHolderPtr());
     }
   });
 
@@ -69,13 +69,13 @@ void MainWindow::initGui() {
 
   m_statusLabel = new QLabel("Статус: ", this);
 
-  m_plot = new DataHolderPlot(m_controlWidget);
+  m_plotWidget = new DataHolderPlotWidget(m_controlWidget);
 
   m_startBtn = new QPushButton("Start", this);
   m_stopBtn  = new QPushButton("Stop", this);
 
   mainLay->addWidget(m_controlWidget);
-  mainLay->addWidget(m_plot);
+  mainLay->addWidget(m_plotWidget);
 
   controlWidgetLay->addWidget(m_statusLabel);
   auto controllers = Settings::getInstance().getSettingsMap()["controllers"].toList();
@@ -88,6 +88,9 @@ void MainWindow::initGui() {
   }
   controlWidgetLay->addWidget(m_startBtn);
   controlWidgetLay->addWidget(m_stopBtn);
+  controlWidgetLay->addStretch();
+
+  m_plotWidget->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
 
   setGeometry(geometry() + QMargins{0, 0, 300, 0});
 
