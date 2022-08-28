@@ -8,6 +8,7 @@
 #include "iprocess.h"
 
 class Process : public IProcess {
+  Q_OBJECT
 public:
   Process(std::shared_ptr<ICommunication> com, QObject *parent = nullptr);
   ~Process() override {
@@ -24,9 +25,9 @@ public:
   }
 
 private:
-  bool                         m_runStatus{false};
-  void                         setRunStatus(bool value);
-  QTimer                      *m_runTimer{nullptr};
+  bool    m_runStatus{false};
+  void    setRunStatus(bool value);
+  QTimer *m_runTimer{nullptr};
 };
 
 #endif // PROCESS_HPP

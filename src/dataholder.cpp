@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QThread>
 
-DataHolder::DataHolder(QObject *parent) : IDataHolder(parent) {
+DataHolder::DataHolder(int size, QObject *parent) : IDataHolder(parent), m_paramSize{size} {
   qInfo() << __PRETTY_FUNCTION__ << QThread::currentThread();
   m_autosaveTimer = new QTimer(this);
   connect(m_autosaveTimer, &QTimer::timeout, this, &DataHolder::autoSave);
@@ -18,7 +18,7 @@ DataHolder::DataHolder(QObject *parent) : IDataHolder(parent) {
   // get delimiter from settings
 
   // create m_data vectors
-  for (int i = 0; i < 6; ++i) {
+  for (int i = 0; i < m_paramSize; ++i) {
     m_data.push_back(QVector<double>());
   }
 }
@@ -147,7 +147,7 @@ int DataHolder::loadData(QFile &file) {
   if (file.open(QIODevice::ReadOnly)) {
     m_data.clear();
     // create m_data vectors
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 0; i < m_paramSize; ++i) {
       m_data.push_back(QVector<double>());
     }
     m_time.clear();

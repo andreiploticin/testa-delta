@@ -24,11 +24,16 @@ private:
   void initGui();
   void enableControlWidgets(bool value = true);
   void handleProcessChanges(bool runStatus);
+  void handleConnectionChanges(bool isConnected);
 
   QAction *m_openSettingsAction{nullptr};
   void     openSettings();
   QAction *m_openDataAction{nullptr};
   void     openData();
+  QAction *m_connectAction{nullptr};
+  void     connectToDelta();
+//  QAction *m_openDataAction{nullptr};
+//  void     openData();
 
   std::shared_ptr<ICommunication> m_communication;
   std::unique_ptr<IProcess>       m_process;

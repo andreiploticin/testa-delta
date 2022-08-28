@@ -6,8 +6,8 @@
 #include <QObject>
 #include <QRunnable>
 #include <QThread>
-#include <memory>
 #include <QVariant>
+#include <memory>
 #include <vector>
 
 #include "controller.h"
@@ -26,7 +26,7 @@ public:
   }
   virtual ~ICommunication() {
     qDebug() << __PRETTY_FUNCTION__ << QThread::currentThread();
-    emit finished();
+    //    emit disconnected();
   }
 
   virtual int                                    establishConnection(CommunicationSetupOptions const &options) = 0;
@@ -39,8 +39,7 @@ public:
   virtual void                                   setSettings(QVariant settings)                                = 0;
 
 signals:
-  void connected();
-  void finished();
+  void connectedChanged(bool);
 
 protected:
   bool                                      m_connectedStatus{false};
@@ -51,9 +50,7 @@ protected:
       return;
     }
     m_connectedStatus = value;
-    if (m_connectedStatus) {
-      emit connected();
-    }
+    connectedChanged(value);
   }
 };
 

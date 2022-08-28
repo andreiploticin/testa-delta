@@ -11,11 +11,11 @@ MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *p
 
   initGui();
 
-  connect(m_communication.get(), &ICommunication::connected, this, [this] {
-    enableControlWidgets();
-  });
+  connect(m_communication.get(), &ICommunication::connectedChanged, this, &MainWindow::handleConnectionChanges);
 
-  m_communication->establishConnection(CommunicationSetupOptions{});
+  m_communication->setSettings(Settings::getInstance().getSettingsMap()["settings"].toMap()["communication"]);
+
+  connectToDelta();
 
   connect(m_startBtn, &QPushButton::clicked, this, [this] {
     if ((nullptr != m_process.get()) && (nullptr != m_communication.get()) && (1 == m_communication->getStatus())) {
@@ -104,6 +104,8 @@ void MainWindow::initGui() {
   connect(m_openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
   m_openDataAction = menu->addAction("Открыть данные");
   connect(m_openDataAction, &QAction::triggered, this, &MainWindow::openData);
+  m_connectAction = menu->addAction("Подключиться");
+  connect(m_connectAction, &QAction::triggered, this, &MainWindow::connectToDelta);
 }
 
 void MainWindow::enableControlWidgets(bool value) {
@@ -126,14 +128,21 @@ void MainWindow::handleProcessChanges(bool runStatus) {
   m_stopBtn->setEnabled(runStatus);
 }
 
+void MainWindow::handleConnectionChanges(bool isConnected) {
+  m_connectAction->setEnabled(!isConnected);
+  enableControlWidgets(isConnected);
+}
+
 void MainWindow::openSettings() {
   auto sd = new SettingsDialog(this);
   sd->exec();
 }
 
-void MainWindow::openData()
-{
+void MainWindow::openData() {
+}
 
+void MainWindow::connectToDelta() {
+  m_communication->establishConnection(CommunicationSetupOptions{});
 }
 
 MainWindow::~MainWindow() {

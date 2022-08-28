@@ -15,6 +15,7 @@
 #include "src/mainwindow.h"
 #include "src/rs485comminication.h"
 #include "src/settings.h"
+#include "src/calibrationwidget.h"
 
 class testBase : public ::testing::Test {
 protected:
@@ -32,28 +33,38 @@ protected:
   }
 };
 
-//TEST_F(testBase, testApp) {
-//  auto g_testCommunication = std::make_shared<TestCommunication>();
-//  Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
-//  auto appWindow = std::make_unique<MainWindow>(g_testCommunication);
-//  appWindow->show();
+// TEST_F(testBase, testApp) {
+//   auto g_testCommunication = std::make_shared<TestCommunication>();
+//   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
+//   auto appWindow = std::make_unique<MainWindow>(g_testCommunication);
+//   appWindow->show();
 
 //  app->exec();
 //}
 
- TEST_F(testBase, testPlot) {
-  auto g_plotWidget = std::make_shared<DataHolderPlotWidget>();
-  auto g_dataHolder = std::make_shared<DataHolder>();
+TEST_F(testBase, testCorrection) {
   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
+  auto calibrationWidget = std::make_unique<CalibrationWidget>(nullptr);
+  calibrationWidget->show();
+  calibrationWidget->setData(Settings::getInstance().getSettingsMap()["calibration"].toList());
 
-  g_plotWidget->setDataHolder(g_dataHolder);
-  g_dataHolder->load("c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-19_17-46-27_r22.dat");
-
-  g_plotWidget->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
-  g_plotWidget->show();
-  g_plotWidget->setGeometry(500,300,600,400);
   app->exec();
 }
+
+// TEST_F(testBase, testPlot) {
+//   auto g_plotWidget = std::make_shared<DataHolderPlotWidget>();
+//   auto g_dataHolder = std::make_shared<DataHolder>();
+//   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
+
+//  g_plotWidget->setDataHolder(g_dataHolder);
+//  g_dataHolder->load(
+//    "c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-19_17-46-27_r22.dat");
+
+//  g_plotWidget->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
+//  g_plotWidget->show();
+//  g_plotWidget->setGeometry(500, 300, 600, 400);
+//  app->exec();
+//}
 
 // TEST_F(testBase, testCommunication) {
 //   auto g_comm = std::make_shared<Rs485Comminication>();

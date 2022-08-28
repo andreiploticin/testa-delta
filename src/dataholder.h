@@ -11,7 +11,7 @@ class DataHolder : public IDataHolder {
   Q_OBJECT
 public:
   // IDataHolder interface
-  DataHolder(QObject *parent = nullptr);
+  DataHolder(int size, QObject *parent = nullptr);
   ~DataHolder() override;
   void                            addDataPoint(uint64_t pointTime, QVector<double>) override;
   int                             load(QString const &) override;
@@ -42,6 +42,7 @@ private:
   QTimer     *m_autosaveTimer{nullptr};
   static QDir m_saveDir;
   uint32_t    m_lastSaveRev{0};
+  int         m_paramSize{0};
 
 public:
 };

@@ -17,7 +17,7 @@ public:
                        double         corValueDef = 0.0);
   void setCurTemp(double value) {
     if (nullptr != m_curTemp) {
-      m_curTemp->setText(QString::number(value, 'f', 2));
+      m_curTemp->setText(QString::number(value, 'f', 1));
     }
   }
   double getSetValue() const {

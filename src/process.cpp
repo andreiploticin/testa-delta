@@ -9,7 +9,7 @@ Process::Process(std::shared_ptr<ICommunication> com, QObject *parent) : IProces
   connect(m_runTimer, &QTimer::timeout, this, [this] {
     if (!m_stopRun && m_runStatus) {
       if ((nullptr != m_dataHolder.get()) && (nullptr != m_communication.get())) {
-        auto                lastPointsPairs = m_communication->getLastValues();
+        auto            lastPointsPairs = m_communication->getLastValues();
         QVector<double> lastPointVector{};
         for (auto const &pair : lastPointsPairs) {
           lastPointVector.push_back(pair.first);
@@ -19,11 +19,17 @@ Process::Process(std::shared_ptr<ICommunication> com, QObject *parent) : IProces
       }
     }
   });
+
+  connect(m_communication.get(), &ICommunication::connectedChanged, this, [this](bool connectionStatus) {
+    if (!connectionStatus) {
+      stop();
+    }
+  });
 }
 
 void Process::restart(std::vector<double> newSets) {
   if (!m_runStatus) {
-    m_dataHolder = std::make_shared<DataHolder>();
+    m_dataHolder = std::make_shared<DataHolder>(2 * newSets.size());
     m_dataHolder->setAutoSave(true, 3);
   }
 
@@ -33,7 +39,9 @@ void Process::restart(std::vector<double> newSets) {
 }
 
 void Process::stop() {
-  m_dataHolder->setAutoSave(false);
+  if (nullptr != m_dataHolder.get()) {
+    m_dataHolder->setAutoSave(false);
+  }
   this->m_communication->stopAll();
   m_runTimer->stop();
   setRunStatus(false);

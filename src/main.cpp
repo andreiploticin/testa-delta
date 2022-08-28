@@ -1,24 +1,21 @@
 #include <QApplication>
+#include <QList>
 #include <QPushButton>
 #include <QVariant>
-#include <QList>
 
-int main(int argc, char **argv)
-{
-  QList<int> vint = {1, 2, 3, 4, 5, 6};
-  QList<double> vd = {45.5, 67.89};
-  QList<QString> vs = {"asdf", "fffff", "dfsdf"};
+#include "src/mainwindow.h"
+#include "src/rs485comminication.h"
+#include "src/settings.h"
 
-  QVariantList a;
+int main(int argc, char **argv) {
+  auto app = std::make_unique<QApplication>(argc, argv);
+  qSetMessagePattern("%{function}(line %{line}): %{message}");
+  auto g_comm = std::make_shared<Rs485Comminication>();
+  auto      binaryFullDirPath    = QCoreApplication::applicationDirPath();
+  auto      settingsPath         = binaryFullDirPath + "/settings.json";
 
-  QApplication app(argc, argv);
-
-  QPushButton button("Hello world !");
-  button.show();
-
-  return app.exec();
-
-  int b = 5;
-  b = 7;
-  return 0;
+  Settings::getInstance().setFilePath(settingsPath);
+  auto appWindow = std::make_unique<MainWindow>(g_comm);
+  appWindow->show();
+  return app->exec();
 }

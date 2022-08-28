@@ -7,7 +7,7 @@
 #include "src/icommunication.h"
 
 static std::mt19937                           generator(0);
-static std::uniform_real_distribution<double> distribution(1000, 1200);
+static std::uniform_real_distribution<double> distribution(-10, 10);
 
 class TestCommunication : public ICommunication {
   // ICommunication interface
@@ -25,9 +25,9 @@ public:
         this,
         [this]() {
           for (int i = 0; i < getNumberOfControllers(); ++i) {
-            std::pair<double, double> pair1{m_sets[0], distribution(generator)};
-            std::pair<double, double> pair2{m_sets[1], distribution(generator)};
-            std::pair<double, double> pair3{m_sets[2], distribution(generator)};
+            std::pair<double, double> pair1{m_sets[0], m_sets[0]+distribution(generator)};
+            std::pair<double, double> pair2{m_sets[1], m_sets[1]+distribution(generator)};
+            std::pair<double, double> pair3{m_sets[2], m_sets[2]+distribution(generator)};
             m_values = {pair1, pair2, pair3};
           }
         },

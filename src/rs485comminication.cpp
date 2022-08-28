@@ -1,5 +1,6 @@
 #include "rs485comminication.h"
 
+#include <QMessageBox>
 #include <QModbusDataUnit>
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -22,8 +23,7 @@ int Rs485Comminication::establishConnection(CommunicationSetupOptions const &opt
   m_errorCount          = 0U;
   m_errorCountTimeout   = 0U;
 
-  auto portName
-    = Settings::getInstance().getSettingsMap()["settings"].toMap()["communication"].toMap()["serial_port"].toString();
+  auto portName = m_settings["serial_port"].toString();
   m_modbusDevice->setConnectionParameter(QModbusDevice::SerialPortNameParameter, portName);
   m_modbusDevice->setConnectionParameter(QModbusDevice::SerialParityParameter, QSerialPort::NoParity);
   m_modbusDevice->setConnectionParameter(QModbusDevice::SerialBaudRateParameter, QSerialPort::Baud9600);
@@ -58,10 +58,22 @@ void Rs485Comminication::setSets(std::vector<double> newSets) {
     if (nullptr != replay) {
       connect(replay, &QModbusReply::finished, this, &Rs485Comminication::onReadReady);
     }
+
+    // START CMD
+    QModbusDataUnit req2{QModbusDataUnit::HoldingRegisters, 0x103C, 1};
+    req2.setValue(0, 1);
+    (void)m_modbusDevice->sendWriteRequest(req2, device);
   }
 }
 
 void Rs485Comminication::stopAll() {
+  // START CMD
+  QModbusDataUnit req{QModbusDataUnit::HoldingRegisters, 0x103C, 1};
+  req.setValue(0, 0);
+  for (int i = 0; i < m_addresses.size(); ++i) {
+    auto device = m_addresses[i];
+    (void)m_modbusDevice->sendWriteRequest(req, device);
+  }
   m_requestLoopTimer->stop();
 }
 
@@ -90,9 +102,9 @@ void Rs485Comminication::onReadReady() {
       if (m_addresses.contains(reply->serverAddress())) {
         auto &pair = m_values[m_addresses.indexOf(reply->serverAddress())];
         if (0x1000 == (unit.startAddress() + i)) {
-          pair.first = 0.1 * unit.value(i);
-        } else if (0x1001 == (unit.startAddress() + i)) {
           pair.second = 0.1 * unit.value(i);
+        } else if (0x1001 == (unit.startAddress() + i)) {
+          pair.first = 0.1 * unit.value(i);
         }
       }
     }
@@ -136,6 +148,13 @@ void Rs485Comminication::onErrorOccured(QModbusDevice::Error error) {
     closeConnection();
     return;
   }
+  if (error == QModbusDevice::Error::ConnectionError) {
+    handleErrorLimitation = true;
+    closeConnection();
+    QMessageBox::critical(nullptr, "Ошибка", "Произошла ошибка соединения в сети Modbus(Rs-485)");
+    //    setConnectedStatus(false);
+    return;
+  }
 }
 
 void Rs485Comminication::makeRequest() {
@@ -159,12 +178,12 @@ void Rs485Comminication::setModbusState(QModbusDevice::State state) {
 
   if (QModbusDevice::ConnectedState == m_modbusState) {
     qInfo() << __PRETTY_FUNCTION__ << "Connected";
-    emit connected();
+    setConnectedStatus(true);
   }
 
   if (QModbusDevice::UnconnectedState == m_modbusState) {
     qInfo() << __PRETTY_FUNCTION__ << "Disconnected";
-    emit connected();
+    setConnectedStatus(false);
   }
 }
 

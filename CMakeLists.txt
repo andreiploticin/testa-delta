@@ -71,6 +71,10 @@ set(SORCES
     src/correctionwidget.cpp
     src/settingsdialog.h
     src/settingsdialog.cpp
+    src/calibrationmodel.h
+    src/calibrationmodel.cpp
+    src/calibrationwidget.h
+    src/calibrationwidget.cpp
 )
 
 add_executable(${PROJECT_NAME}
@@ -137,4 +141,4 @@ set_target_properties(tests PROPERTIES
 gtest_discover_tests(tests)
 # ----------------- tests with qt
 
-# windeployqt(tests)
+windeployqt(${PROJECT_NAME})

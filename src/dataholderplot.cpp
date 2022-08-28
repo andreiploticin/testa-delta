@@ -8,7 +8,7 @@ Legend::Legend(DataHolderPlot *plot) : m_plot{plot}, m_leg{plot->legend} {
   m_valuesLay->setMode(QCPLayer::LayerMode::lmBuffered);
 
   m_cursor = new QCPItemStraightLine(m_plot);
-//  m_cursor->setVisible(false);
+  //  m_cursor->setVisible(false);
   m_plot->addLayer("cursor");
   m_cursorLay = m_plot->layer("cursor");
   m_cursorLay->setMode(QCPLayer::LayerMode::lmBuffered);
@@ -27,10 +27,8 @@ void Legend::setValuesVisible(bool value) {
   }
   m_valuesVisible = value;
   m_cursorLay->setVisible(value);
-//  if (m_valuesVisible) {
-    m_valuesLay->replot();
-    m_cursorLay->replot();
-//  }
+  m_valuesLay->replot();
+  m_cursorLay->replot();
 }
 
 void Legend::setup() {
