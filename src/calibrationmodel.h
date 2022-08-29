@@ -14,13 +14,15 @@ public:
   QVariant getVariant() const;
 
   // QAbstractItemModel interface
-  int      rowCount(QModelIndex const &parent) const override;
-  int      columnCount(QModelIndex const &parent) const override;
-  QVariant data(QModelIndex const &index, int role) const override;
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-  bool     insertRows(int row, int count, QModelIndex const &parent) override;
-  bool     removeRows(int row, int count, QModelIndex const &parent) override;
-  void     sort(int column, Qt::SortOrder order) override;
+  int           rowCount(QModelIndex const &parent) const override;
+  int           columnCount(QModelIndex const &parent) const override;
+  QVariant      data(QModelIndex const &index, int role) const override;
+  QVariant      headerData(int section, Qt::Orientation orientation, int role) const override;
+  bool          insertRows(int row, int count, QModelIndex const &parent) override;
+  bool          removeRows(int row, int count, QModelIndex const &parent) override;
+  void          sort(int column, Qt::SortOrder order) override;
+  Qt::ItemFlags flags(QModelIndex const &index) const override;
+  bool          setData(QModelIndex const &index, QVariant const &value, int role) override;
 
 private:
   QVector<QPair<double, double>> m_data;

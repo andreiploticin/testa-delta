@@ -54,7 +54,7 @@ public:
   }
 
   void        setFilePath(QString const &path);
-  void        save();
+  void        save(QVariantMap mapName);
   QVariantMap getSettingsMap() const {
     return m_settingsMap;
   }

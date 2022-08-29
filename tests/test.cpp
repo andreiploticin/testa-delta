@@ -10,12 +10,13 @@
 //#include "helpers.hpp"
 //#include "src/process.hpp"
 #include "communication_helper.h"
+#include "src/calibrationwidget.h"
 #include "src/dataholder.h"
 #include "src/dataholderplotwidget.h"
 #include "src/mainwindow.h"
 #include "src/rs485comminication.h"
 #include "src/settings.h"
-#include "src/calibrationwidget.h"
+#include "src/settingsdialog.h".h "
 
 class testBase : public ::testing::Test {
 protected:
@@ -44,10 +45,16 @@ protected:
 
 TEST_F(testBase, testCorrection) {
   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
-  auto calibrationWidget = std::make_unique<CalibrationWidget>(nullptr);
-  calibrationWidget->show();
-  calibrationWidget->setData(Settings::getInstance().getSettingsMap()["calibration"].toList());
+  //  auto calibrationWidget = std::make_unique<CalibrationWidget>(nullptr);
+  //  calibrationWidget->show();
+  //  calibrationWidget->setData(Settings::getInstance().getSettingsMap()["settings"].toMap()["calibration"].toList());
 
+  auto settingsDialog = std::make_unique<SettingsDialog>(Settings::getInstance().getSettingsMap()["settings"].toMap());
+
+  Settings::getInstance().
+
+
+  settingsDialog->show();
   app->exec();
 }
 

@@ -134,7 +134,7 @@ void MainWindow::handleConnectionChanges(bool isConnected) {
 }
 
 void MainWindow::openSettings() {
-  auto sd = new SettingsDialog(this);
+  auto sd = new SettingsDialog({}, this);
   sd->exec();
 }
 

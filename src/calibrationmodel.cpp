@@ -9,7 +9,7 @@ void CalibrationModel::setVariant(QVariant data) {
 
     auto getVectorByName = [&data](QString const &name) -> QVector<double> {
       QVector<double> ret;
-      for (auto item : data.toMap()[name].toList()) {
+      for (auto const item : data.toMap()[name].toList()) {
         ret.push_back(item.toDouble());
       }
       return ret;
@@ -25,7 +25,16 @@ void CalibrationModel::setVariant(QVariant data) {
 }
 
 QVariant CalibrationModel::getVariant() const {
-  return 1;
+  QList<QVariant> temps;
+  QList<QVariant> cors;
+  for (auto const item : m_data) {
+    temps.push_back(item.first);
+    temps.push_back(item.second);
+  }
+  QVariantMap ret{};
+  ret["data_temp"]    = temps;
+  ret["data_correct"] = cors;
+  return ret;
 }
 
 int CalibrationModel::rowCount(QModelIndex const &parent) const {
@@ -37,8 +46,11 @@ int CalibrationModel::columnCount(QModelIndex const &parent) const {
 }
 
 QVariant CalibrationModel::data(QModelIndex const &index, int role) const {
-  auto const &point = m_data[index.row()];
-  return double{(0 == index.column()) ? point.first : point.second};
+  if ((Qt::DisplayRole == role) || (Qt::EditRole == role)) {
+    auto const &point = m_data[index.row()];
+    return double{(0 == index.column()) ? point.first : point.second};
+  }
+  return {};
 }
 
 QVariant CalibrationModel::headerData(int section, Qt::Orientation orientation, int role) const {
@@ -50,7 +62,7 @@ QVariant CalibrationModel::headerData(int section, Qt::Orientation orientation, 
         return QString("Корректировка, С");
     }
   }
-  return QVariant();
+  return {};
 }
 
 bool CalibrationModel::insertRows(int row, int count, QModelIndex const &parent) {
@@ -62,4 +74,26 @@ bool CalibrationModel::removeRows(int row, int count, QModelIndex const &parent)
 }
 
 void CalibrationModel::sort(int column, Qt::SortOrder order) {
+}
+
+Qt::ItemFlags CalibrationModel::flags(QModelIndex const &index) const {
+  if (!index.isValid()) {
+    return Qt::ItemIsEnabled;
+  }
+  return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}
+
+bool CalibrationModel::setData(QModelIndex const &index, QVariant const &value, int role) {
+  auto row = index.row();
+  auto col = index.column();
+  if ((row >= m_data.size()) || (col > 1)) {
+    return false;
+  }
+
+  if (0 == col) {
+    m_data[row].first = value.toDouble();
+  } else {
+    m_data[row].second = value.toDouble();
+  }
+  return true;
 }
