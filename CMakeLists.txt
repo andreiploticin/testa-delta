@@ -75,6 +75,8 @@ set(SORCES
     src/calibrationmodel.cpp
     src/calibrationwidget.h
     src/calibrationwidget.cpp
+    src/utils.h
+    src/utils.cpp
 )
 
 add_executable(${PROJECT_NAME}

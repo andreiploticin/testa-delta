@@ -25,6 +25,7 @@ private:
   void enableControlWidgets(bool value = true);
   void handleProcessChanges(bool runStatus);
   void handleConnectionChanges(bool isConnected);
+  void saveSetsAndCorrections();
 
   QAction *m_openSettingsAction{nullptr};
   void     openSettings();
@@ -46,6 +47,10 @@ private:
   QPushButton                    *m_stopBtn{nullptr};
   DataHolderPlotWidget           *m_plotWidget{nullptr};
   bool                            m_controlWidgetsEnabled{true};
+
+  // QWidget interface
+protected:
+  void closeEvent(QCloseEvent *event) override;
 };
 
 #endif // MAINWINDOW_H

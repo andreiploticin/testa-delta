@@ -1,4 +1,5 @@
 #include "deltawidget.h"
+
 #include <QFormLayout>
 
 DeltaWidget::DeltaWidget(QWidget *parent, QString const &label, double setValueDef, double corValueDef)
@@ -12,4 +13,12 @@ DeltaWidget::DeltaWidget(QWidget *parent, QString const &label, double setValueD
   mainLay->addRow("Текущая температура", m_curTemp);
   mainLay->addRow("Уставка", m_setTempEdit);
   mainLay->addRow("Корректировка", m_correction);
+}
+
+QVariantMap DeltaWidget::getInfo() const {
+  QVariantMap ret{};
+  ret["correction"] = m_correction->text().toDouble();
+  ret["set"]        = m_setTempEdit->text().toDouble();
+  ret["label"]      = this->title();
+  return ret;
 }

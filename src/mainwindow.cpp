@@ -3,6 +3,7 @@
 #include "src/process.h"
 #include "src/settings.h"
 #include "src/settingsdialog.h"
+#include "src/utils.h"
 
 MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *parent)
     : QMainWindow{parent}, m_communication(std::move(communication)) {
@@ -20,9 +21,14 @@ MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *p
   connect(m_startBtn, &QPushButton::clicked, this, [this] {
     if ((nullptr != m_process.get()) && (nullptr != m_communication.get()) && (1 == m_communication->getStatus())) {
       std::vector<double> newSets{};
-      for (auto const &item : m_controllerWidgets) {
-        newSets.push_back(item->getSetValue());
+      auto correctionsList = Settings::getInstance().getSettingsMap()["settings"].toMap()["calibration"].toList();
+
+      for (int i{0}; i < m_controllerWidgets.size(); ++i) {
+        auto const &item       = m_controllerWidgets[i];
+        auto        correction = utils::correction(item->getSetValue(), correctionsList[i].toMap());
+        newSets.push_back(item->getSetValue() - correction);
       }
+      qDebug() << newSets;
 
       // process create dataHolder
       m_process->restart(newSets);
@@ -133,8 +139,21 @@ void MainWindow::handleConnectionChanges(bool isConnected) {
   enableControlWidgets(isConnected);
 }
 
+void MainWindow::saveSetsAndCorrections() {
+  QVariantList controllersList{};
+  for (auto const &item : m_controllerWidgets) {
+    controllersList.push_back(item->getInfo());
+  }
+  Settings::getInstance().save(controllersList, "controllers");
+}
+
 void MainWindow::openSettings() {
-  auto sd = new SettingsDialog({}, this);
+  auto sd = new SettingsDialog(Settings::getInstance().getSettingsMap()["settings"].toMap(), this);
+
+  QObject::connect(sd, &SettingsDialog::saveSettings, [this](QVariantMap map) {
+    Settings::getInstance().save(map, "settings");
+  });
+
   sd->exec();
 }
 
@@ -146,4 +165,9 @@ void MainWindow::connectToDelta() {
 }
 
 MainWindow::~MainWindow() {
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+  saveSetsAndCorrections();
+  QMainWindow::closeEvent(event);
 }

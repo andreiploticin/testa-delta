@@ -41,8 +41,7 @@ SettingsDialog::SettingsDialog(QVariantMap settings, QWidget *parent) : QDialog{
 
   connect(m_closeBtn, &QPushButton::clicked, this, &QDialog::reject);
   connect(m_saveBtn, &QPushButton::clicked, this, [this]() {
-    emit getSettings();
-    qDebug() << getSettings();
+    emit saveSettings(getSettings());
   });
 
   if (!settings.empty()) {

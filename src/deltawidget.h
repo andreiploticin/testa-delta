@@ -23,6 +23,7 @@ public:
   double getSetValue() const {
     return m_setTempEdit->text().toDouble() + m_correction->text().toDouble();
   }
+  QVariantMap getInfo() const;
 
 private:
   QLineEdit        *m_setTempEdit{nullptr};

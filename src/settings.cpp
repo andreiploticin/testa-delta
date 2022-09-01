@@ -10,7 +10,13 @@ void Settings::setFilePath(QString const &path) {
   load();
 }
 
-void Settings::save() {
+void Settings::save(QVariant variant, QString const &name) {
+  if (m_settingsMap.contains(name)) {
+    m_settingsMap[name] = variant;
+  } else {
+    qWarning() << "No section" << name << "in settings file";
+  }
+  save();
 }
 
 void Settings::load() {
@@ -38,6 +44,18 @@ void Settings::load() {
   m_settingsMap = doc.toVariant().toMap();
 
   qDebug() << m_settingsMap;
+}
+
+void Settings::save() {
+  if (m_filePath.isEmpty()) {
+    qInfo() << __PRETTY_FUNCTION__ << "No settings file declared";
+    return;
+  }
+
+  if (!SettingsFileIO::saveToFile(m_filePath, QJsonDocument::fromVariant(m_settingsMap).toJson())) {
+    qCritical() << "Can't save settings to file";
+    return;
+  }
 }
 
 std::unique_ptr<Settings> Settings::m_instance{};

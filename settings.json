@@ -1,95 +1,126 @@
 {
-    "settings":
-    {
-      "communication":
-      {
-        "serial_port": "COM5",
-        "delta_address":
-        [
-          2, 3
-        ],
-        "max_timeout_errors": 3,
-        "max_errors": 10
-      },
-      "data_acquisition_frequency": 1,
-      "autosave_period": 3,
-      "calibration":
-      [
+    "controllers": [
         {
-          "label": "Верхняя зона",
-          "data_temp":
-          [
-            200, 300, 400, 500, 600
-          ],
-          "data_correct":
-          [
-            0.1, 0.3, -0.5, 0, 1
-          ]
+            "correction": 0,
+            "label": "Верхняя зона",
+            "set": 1300
         },
         {
-          "label": "Средняя зона",
-          "data_temp":
-          [
-            234, 345, 456, 567
-          ],
-          "data_correct":
-          [
-            0.2, -0.2, 0.7, 0.7
-          ]
+            "correction": 0,
+            "label": "Средняя зона",
+            "set": 1
+        },
+        {
+            "correction": 0,
+            "label": "Нижняя зона",
+            "set": 1000
         }
-      ]
-    },
-    "controllers":
-    [
-      {
-        "label": "Верхняя зона",
-        "set": 1000.0,
-        "correction": 0.1
-      }
     ],
-    "plotLines":
-    [
-      {
-        "label": "param1",
-        "color": "#880033",
-        "line": 1,
-        "width": 2,
-        "enable": true
-      },
-      {
-        "label": "param2",
-        "color": "#668800",
-        "line": 1,
-        "width": 2,
-        "enable": true
-      },
-      {
-        "label": "param3",
-        "color": "#008866",
-        "line": 1,
-        "width": 2,
-        "enable": true
-      },
-      {
-        "label": "param4",
-        "color": "#ff4400",
-        "line": 1,
-        "width": 2,
-        "enable": true
-      },
-      {
-        "label": "param5",
-        "color": "#440066",
-        "line": 1,
-        "width": 2,
-        "enable": true
-      },
-      {
-        "label": "param6",
-        "color": "#660044",
-        "line": 1,
-        "width": 2,
-        "enable": true
-      }
-    ]
+    "plotLines": [
+        {
+            "color": "#880033",
+            "enable": true,
+            "label": "param1",
+            "line": 1,
+            "width": 2
+        },
+        {
+            "color": "#668800",
+            "enable": true,
+            "label": "param2",
+            "line": 1,
+            "width": 2
+        },
+        {
+            "color": "#008866",
+            "enable": true,
+            "label": "param3",
+            "line": 1,
+            "width": 2
+        },
+        {
+            "color": "#ff4400",
+            "enable": true,
+            "label": "param4",
+            "line": 1,
+            "width": 2
+        },
+        {
+            "color": "#440066",
+            "enable": true,
+            "label": "param5",
+            "line": 1,
+            "width": 2
+        },
+        {
+            "color": "#660044",
+            "enable": true,
+            "label": "param6",
+            "line": 1,
+            "width": 2
+        }
+    ],
+    "settings": {
+        "autosave_period": 3,
+        "calibration": [
+            {
+                "data_correct": [
+                    0.1,
+                    0.3,
+                    -0.5,
+                    0,
+                    1
+                ],
+                "data_temp": [
+                    200,
+                    300,
+                    400,
+                    500,
+                    600
+                ],
+                "label": "Верхняя зона"
+            },
+            {
+                "data_correct": [
+                    0.2,
+                    -0.2,
+                    0.7,
+                    0.7
+                ],
+                "data_temp": [
+                    234,
+                    345,
+                    456,
+                    567
+                ],
+                "label": "Средняя зона"
+            },
+            {
+                "data_correct": [
+                    0.2,
+                    -0.2,
+                    0.7,
+                    0
+                ],
+                "data_temp": [
+                    234,
+                    345,
+                    456,
+                    750
+                ],
+                "label": "Нижняя зона"
+            }
+        ],
+        "communication": {
+            "delta_address": [
+                2,
+                3,
+                9
+            ],
+            "max_errors": 10,
+            "max_timeout_errors": 3,
+            "serial_port": "COM1"
+        },
+        "data_acquisition_frequency": 1
+    }
 }

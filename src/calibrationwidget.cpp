@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QDoubleSpinBox>
+#include <QHeaderView>
 #include <QLayout>
 #include <QStyledItemDelegate>
 
@@ -64,6 +65,8 @@ void CalibrationWidget::setData(QVariantList data) {
   if (!m_models.empty()) {
     setModelToView(0);
   }
+
+  m_tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 QVariantList CalibrationWidget::getData() const {

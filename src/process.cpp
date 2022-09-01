@@ -1,6 +1,7 @@
 #include "process.h"
 
 #include "dataholder.h"
+#include "settings.h"
 
 Process::Process(std::shared_ptr<ICommunication> com, QObject *parent) : IProcess(std::move(com), parent) {
   qInfo() << __PRETTY_FUNCTION__ << QThread::currentThread();
@@ -30,11 +31,14 @@ Process::Process(std::shared_ptr<ICommunication> com, QObject *parent) : IProces
 void Process::restart(std::vector<double> newSets) {
   if (!m_runStatus) {
     m_dataHolder = std::make_shared<DataHolder>(2 * newSets.size());
-    m_dataHolder->setAutoSave(true, 3);
+
+    auto autosave_period = Settings::getInstance().getSettingsMap()["settings"].toMap()["autosave_period"].toUInt();
+    m_dataHolder->setAutoSave(true, 60 * autosave_period);
   }
 
   this->m_communication->setSets(newSets);
-  m_runTimer->start(1000);
+  auto period = Settings::getInstance().getSettingsMap()["settings"].toMap()["data_acquisition_frequency"].toUInt();
+  m_runTimer->start(1000 * period);
   setRunStatus(true);
 }
 

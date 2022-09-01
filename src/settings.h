@@ -23,6 +23,7 @@ public:
 
     return -1;
   }
+
   static unsigned readFromFile(QString filePath, QByteArray &data) {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -54,7 +55,7 @@ public:
   }
 
   void        setFilePath(QString const &path);
-  void        save(QVariantMap mapName);
+  void        save(QVariant variant, QString const &name);
   QVariantMap getSettingsMap() const {
     return m_settingsMap;
   }
@@ -64,6 +65,7 @@ protected:
 
 private:
   void load();
+  void save();
   explicit Settings(QObject *parent = nullptr);
   QString                          m_filePath;
   static std::unique_ptr<Settings> m_instance;

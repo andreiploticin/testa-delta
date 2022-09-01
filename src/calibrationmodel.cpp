@@ -29,7 +29,7 @@ QVariant CalibrationModel::getVariant() const {
   QList<QVariant> cors;
   for (auto const item : m_data) {
     temps.push_back(item.first);
-    temps.push_back(item.second);
+    cors.push_back(item.second);
   }
   QVariantMap ret{};
   ret["data_temp"]    = temps;
