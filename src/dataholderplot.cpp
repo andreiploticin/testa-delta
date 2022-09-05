@@ -1,4 +1,4 @@
-#include "dataholderplot.h"
+﻿#include "dataholderplot.h"
 
 Legend::Legend(DataHolderPlot *plot) : m_plot{plot}, m_leg{plot->legend} {
   setVisible(true);
@@ -19,6 +19,7 @@ Legend::Legend(DataHolderPlot *plot) : m_plot{plot}, m_leg{plot->legend} {
 
 void Legend::setVisible(bool value) {
   m_leg->setVisible(value);
+  //    m_leg->updateLayout();
 }
 
 void Legend::setValuesVisible(bool value) {
@@ -27,20 +28,31 @@ void Legend::setValuesVisible(bool value) {
   }
   m_valuesVisible = value;
   m_cursorLay->setVisible(value);
-  m_valuesLay->replot();
   m_cursorLay->replot();
+
+  if (value) {
+    setup();
+  } else {
+    for (int i{0}; i < m_values.size(); ++i) {
+      auto &item = m_values[i];
+      m_leg->remove(item);
+//      m_leg->removeItem(m_leg->rowColToIndex(i, 1));
+    }
+    m_values.clear();
+    m_leg->updateLayout();
+  }
+
+  m_valuesLay->replot();
 }
 
 void Legend::setup() {
   auto itemCount = m_plot->graphCount();
 
   for (int i{0}; i < itemCount; ++i) {
-    auto item = new QCPTextElement(m_plot, "0.0");
+    auto item = new QCPTextElement(m_plot, "           ");
     item->setTextColor(Qt::black);
     m_leg->addElement(i, 2, item);
     item->setLayer(m_valuesLay);
-    //    item->setVisible(false);
-    qInfo() << item->layer()->name();
     m_values.push_back(item);
   }
 }
@@ -83,6 +95,10 @@ DataHolderPlot::DataHolderPlot(QWidget *parent) : QCustomPlot(parent), m_legend(
   this->setInteraction(QCP::iRangeDrag, true);
   this->setInteraction(QCP::iRangeZoom, true);
   this->setNoAntialiasingOnDrag(true);
+
+  //  auto cLegend = new QCPLayoutGrid();
+  //  this->axisRect()->insetLayout()->addElement(cLegend, Qt::AlignLeft | Qt::AlignTop);
+  //  cLegend->addElement(new QCPTextElement{this, "AAAAAAAAAA"});
 }
 
 DataHolderPlot::~DataHolderPlot() {
@@ -119,7 +135,7 @@ void DataHolderPlot::setSettings(QVariant settings) {
     graph(i)->setPen(pen);
     graph(i)->setName(map["label"].toString());
   }
-  m_legend.setup();
+//  m_legend.setup();
   replot();
 }
 

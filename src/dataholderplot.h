@@ -16,7 +16,7 @@ public:
   /**
    * @brief Add all need drawable object.
    * Apply color settings.
-   *
+   * All information gets from parent plot.
    */
   void setup();
 
