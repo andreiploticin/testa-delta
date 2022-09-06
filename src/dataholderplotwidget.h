@@ -17,8 +17,10 @@ public:
   }
 
 private:
+  void updateViewModeBtn(DataHolderPlot::ViewMode viewMode);
   DataHolderPlot *m_plot{nullptr};
   QPushButton    *m_cursorBtn{nullptr};
+  QPushButton    *m_viewModeBtn{nullptr};
 };
 
 #endif // DATAHOLDERPLOTWIDGET_H

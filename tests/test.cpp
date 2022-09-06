@@ -35,14 +35,14 @@ protected:
   }
 };
 
-//TEST_F(testBase, testApp) {
-//  auto g_testCommunication = std::make_shared<TestCommunication>();
-//  Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
-//  auto appWindow = std::make_unique<MainWindow>(g_testCommunication);
-//  appWindow->show();
+TEST_F(testBase, testApp) {
+  auto g_testCommunication = std::make_shared<TestCommunication>();
+  Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
+  auto appWindow = std::make_unique<MainWindow>(g_testCommunication);
+  appWindow->show();
 
-//  app->exec();
-//}
+  app->exec();
+}
 
 // TEST_F(testBase, testCorrection) {
 //   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
@@ -76,26 +76,26 @@ protected:
 //  app->exec();
 //}
 
-TEST_F(testBase, testLegend) {
-  auto g_plotWidget = std::make_shared<DataHolderPlotWidget>();
-  auto g_dataHolder = std::make_shared<DataHolder>(6);
-  Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
+//TEST_F(testBase, testLegend) {
+//  auto g_plotWidget = std::make_shared<DataHolderPlotWidget>();
+//  auto g_dataHolder = std::make_shared<DataHolder>(6);
+//  Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
 
-  g_plotWidget->setDataHolder(g_dataHolder);
-  g_dataHolder->load(
-    "c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-20_17-14-57_r514.dat");
+//  g_plotWidget->setDataHolder(g_dataHolder);
+//  g_dataHolder->load(
+//    "c:/dev/build-testa-delta-Desktop_Qt_6_3_1_MinGW_64_bit-Debug/data/autosave2022-08-20_17-14-57_r514.dat");
 
-  g_plotWidget->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
-  g_plotWidget->show();
-  g_plotWidget->setGeometry(500, 300, 600, 400);
-  app->exec();
-}
+//  g_plotWidget->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
+//  g_plotWidget->show();
+//  g_plotWidget->setGeometry(500, 300, 600, 400);
+//  app->exec();
+//}
 
 
 // TEST_F(testBase, testCommunication) {
 //   auto g_comm = std::make_shared<Rs485Comminication>();
 //   Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
-//   g_comm->setSettings(Settings::getInstance().getSettingsMap()["settings].toMap()["communication"]);
+//   g_comm->setSettings(Settings::getInstance().getSettingsMap()["settings"].toMap()["communication"]);
 //   g_comm->establishConnection({});
 //   QTimer::singleShot(4000, [&g_comm]() {
 //     g_comm->setSets({1000});

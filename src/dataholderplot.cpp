@@ -36,7 +36,7 @@ void Legend::setValuesVisible(bool value) {
     for (int i{0}; i < m_values.size(); ++i) {
       auto &item = m_values[i];
       m_leg->remove(item);
-//      m_leg->removeItem(m_leg->rowColToIndex(i, 1));
+      //      m_leg->removeItem(m_leg->rowColToIndex(i, 1));
     }
     m_values.clear();
     m_leg->updateLayout();
@@ -135,7 +135,7 @@ void DataHolderPlot::setSettings(QVariant settings) {
     graph(i)->setPen(pen);
     graph(i)->setName(map["label"].toString());
   }
-//  m_legend.setup();
+  //  m_legend.setup();
   replot();
 }
 
@@ -144,10 +144,17 @@ void DataHolderPlot::setViewMode(ViewMode mode) {
     return;
   }
 
-  // action
+  if (ViewMode::FREE == m_viewMode) {
+//    m_currentView.setWidth(this->xAxis->range().size());
+//    this->yAxis->rescale(true);
+//    this->yAxis->setRangeLower(this->yAxis->range().lower - 10);
+//    this->yAxis->setRangeUpper(this->yAxis->range().upper + 10);
+    m_currentView = getRange();
+  }
 
   m_viewMode = mode;
   emit viewModeChanged(m_viewMode);
+  replotDataUpdated();
 }
 
 void DataHolderPlot::enableCursor(bool value) {
@@ -182,8 +189,7 @@ void DataHolderPlot::action() {
 }
 
 void DataHolderPlot::replotDataUpdated() {
-  xAxis->rescale();
-  yAxis->rescale();
+  updateRange();
   replot();
 }
 
@@ -218,6 +224,44 @@ void DataHolderPlot::initGraphs() {
 void DataHolderPlot::setupGraphs() {
 }
 
+void DataHolderPlot::updateRange() {
+  switch (m_viewMode) {
+    case HOLD_ALL:
+      this->xAxis->rescale();
+      this->yAxis->rescale(true);
+
+      if (this->yAxis->range().size() > 4000)
+        this->yAxis->setRange(-2000, 2000);
+
+      if (this->yAxis->range().size() < 20) {
+        this->yAxis->setRangeLower(this->yAxis->range().lower - 10);
+        this->yAxis->setRangeUpper(this->yAxis->range().upper + 10);
+      }
+      m_currentView = getRange();
+      break;
+    case HOLD_X: {
+      this->xAxis->rescale();
+      this->xAxis->setRangeLower(this->xAxis->range().upper - m_currentView.width());
+      m_currentView.setLeft(this->xAxis->range().lower);
+      m_currentView.setRight(this->xAxis->range().upper);
+      break;
+    }
+    default:
+      break;
+  }
+
+  if ((m_viewMode == HOLD_ALL) || (m_viewMode == HOLD_X)) {
+    this->xAxis->setRange(m_currentView.left(), m_currentView.right());
+    this->yAxis->setRange(m_currentView.bottom(), m_currentView.top());
+  }
+}
+
+inline QRectF DataHolderPlot::getRange() {
+  QPointF tl(this->xAxis->range().lower, this->yAxis->range().upper);
+  QPointF br(this->xAxis->range().upper, this->yAxis->range().lower);
+  return QRectF(tl, br);
+}
+
 void DataHolderPlot::mouseMoveEvent(QMouseEvent *event) {
   if (m_cursorIsOn && (nullptr != m_dataHolder.get())) {
     auto   mouseCord = event->pos();
@@ -227,4 +271,16 @@ void DataHolderPlot::mouseMoveEvent(QMouseEvent *event) {
     m_legend.setValues(data);
   }
   QCustomPlot::mouseMoveEvent(event);
+}
+
+void DataHolderPlot::mousePressEvent(QMouseEvent *event) {
+  if (QEvent::MouseButtonPress == event->type()) {
+    setViewMode(ViewMode::FREE);
+  }
+  QCustomPlot::mousePressEvent(event);
+}
+
+void DataHolderPlot::wheelEvent(QWheelEvent *event) {
+  setViewMode(ViewMode::FREE);
+  QCustomPlot::wheelEvent(event);
 }

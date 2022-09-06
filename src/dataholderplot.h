@@ -41,8 +41,8 @@ class DataHolderPlot : public QCustomPlot {
 
 public:
   enum ViewMode {
-    HOLD_ALL = 1,
-    HOLD_X   = 2,
+    HOLD_X   = 1,
+    HOLD_ALL = 2,
     FREE     = 3
   };
   explicit DataHolderPlot(QWidget *parent = nullptr);
@@ -55,6 +55,19 @@ public:
   void switchCursor() {
     enableCursor(!m_cursorIsOn);
   }
+  void switchViewMode() {
+    switch (m_viewMode) {
+      case HOLD_ALL:
+        setViewMode(FREE);
+        break;
+      case HOLD_X:
+        setViewMode(HOLD_ALL);
+        break;
+      default:
+        setViewMode(HOLD_X);
+        break;
+    }
+  }
   void action();
 
 signals:
@@ -65,15 +78,19 @@ signals:
   // QWidget interface
 protected:
   void mouseMoveEvent(QMouseEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void wheelEvent(QWheelEvent *event) override;
 
 private:
   /**
    * @brief Update plot after data changed
    */
-  void replotDataUpdated();
-  void updateGraphsData();
-  void initGraphs();
-  void setupGraphs();
+  void   replotDataUpdated();
+  void   updateGraphsData();
+  void   initGraphs();
+  void   setupGraphs();
+  void   updateRange();
+  QRectF getRange();
 
   Legend                       m_legend;
   ViewMode                     m_viewMode{HOLD_ALL};
@@ -82,6 +99,7 @@ private:
   bool                         m_settingsIsSet{true};
   QVariant                     m_settings;
   std::shared_ptr<IDataHolder> m_dataHolder;
+  QRectF                       m_currentView;
 };
 
 #endif // DATAHOLDERPLOT_H
