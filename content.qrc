@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
+        <file>imgs/graph_lead_full.png</file>
+        <file>imgs/graph_lead_x.png</file>
+        <file>imgs/graph_lead_zoom.png</file>
         <file>res/defaultSettings</file>
     </qresource>
 </RCC>

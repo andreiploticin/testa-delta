@@ -45,6 +45,7 @@ void Process::restart(std::vector<double> newSets) {
 void Process::stop() {
   if (nullptr != m_dataHolder.get()) {
     m_dataHolder->setAutoSave(false);
+    m_dataHolder->save("aaa", false);
   }
   this->m_communication->stopAll();
   m_runTimer->stop();

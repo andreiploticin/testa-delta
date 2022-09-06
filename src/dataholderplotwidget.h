@@ -1,6 +1,7 @@
 #ifndef DATAHOLDERPLOTWIDGET_H
 #define DATAHOLDERPLOTWIDGET_H
 
+#include <QCheckBox>
 #include <QWidget>
 
 #include "src/dataholderplot.h"
@@ -17,7 +18,7 @@ public:
   }
 
 private:
-  void updateViewModeBtn(DataHolderPlot::ViewMode viewMode);
+  void            updateViewModeBtn(DataHolderPlot::ViewMode viewMode);
   DataHolderPlot *m_plot{nullptr};
   QPushButton    *m_cursorBtn{nullptr};
   QPushButton    *m_viewModeBtn{nullptr};

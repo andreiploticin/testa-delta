@@ -1,19 +1,19 @@
 {
     "controllers": [
         {
-            "correction": 0.2,
+            "correction": 0.1,
             "label": "Верхняя зона",
-            "set": 1290
+            "set": 2000
         },
         {
             "correction": 0.1,
             "label": "Средняя зона",
-            "set": 1290
+            "set": 1000
         },
         {
-            "correction": 0,
+            "correction": 0.1,
             "label": "Нижняя зона",
-            "set": 1290
+            "set": 1000
         }
     ],
     "plotLines": [

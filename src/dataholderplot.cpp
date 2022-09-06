@@ -9,7 +9,7 @@ Legend::Legend(DataHolderPlot *plot) : m_plot{plot}, m_leg{plot->legend} {
 
   m_cursor = new QCPItemStraightLine(m_plot);
   //  m_cursor->setVisible(false);
-  m_plot->addLayer("cursor");
+  m_plot->addLayer("cursor", m_leg->layer(), QCustomPlot::LayerInsertMode::limBelow);
   m_cursorLay = m_plot->layer("cursor");
   m_cursorLay->setMode(QCPLayer::LayerMode::lmBuffered);
   m_cursorLay->setVisible(false);
@@ -145,10 +145,10 @@ void DataHolderPlot::setViewMode(ViewMode mode) {
   }
 
   if (ViewMode::FREE == m_viewMode) {
-//    m_currentView.setWidth(this->xAxis->range().size());
-//    this->yAxis->rescale(true);
-//    this->yAxis->setRangeLower(this->yAxis->range().lower - 10);
-//    this->yAxis->setRangeUpper(this->yAxis->range().upper + 10);
+    //    m_currentView.setWidth(this->xAxis->range().size());
+    //    this->yAxis->rescale(true);
+    //    this->yAxis->setRangeLower(this->yAxis->range().lower - 10);
+    //    this->yAxis->setRangeUpper(this->yAxis->range().upper + 10);
     m_currentView = getRange();
   }
 

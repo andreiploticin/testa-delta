@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 set(PROJECT_NAME testa-delta)
-project(${PROJECT_NAME} VERSION 1.0.0 LANGUAGES CXX)
+project(${PROJECT_NAME} VERSION 0.3.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -78,6 +78,8 @@ set(SORCES
     src/utils.h
     src/utils.cpp
 )
+
+configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 add_executable(${PROJECT_NAME}
     ${SORCES}

@@ -4,6 +4,7 @@
 #include "src/settings.h"
 #include "src/settingsdialog.h"
 #include "src/utils.h"
+#include "config.h"
 
 MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *parent)
     : QMainWindow{parent}, m_communication(std::move(communication)) {
@@ -77,8 +78,8 @@ void MainWindow::initGui() {
 
   m_plotWidget = new DataHolderPlotWidget(m_controlWidget);
 
-  m_startBtn = new QPushButton("Start", this);
-  m_stopBtn  = new QPushButton("Stop", this);
+  m_startBtn = new QPushButton("Пуск", this);
+  m_stopBtn  = new QPushButton("Остановка", this);
 
   mainLay->addWidget(m_controlWidget);
   mainLay->addWidget(m_plotWidget);
@@ -89,8 +90,25 @@ void MainWindow::initGui() {
     auto controller = controllers[i].toMap();
     auto w          = new DeltaWidget(
       this, controller["label"].toString(), controller["set"].toDouble(), controller["correction"].toDouble());
+    if (0 == i) {
+      w->enableMaster();
+    } else {
+      controlWidgetLay->addSpacing(10);
+    }
     m_controllerWidgets.push_back(w);
     controlWidgetLay->addWidget(w);
+  }
+  for (int i = 1; i < m_controllerWidgets.size(); ++i) {
+    auto &controller = m_controllerWidgets[i];
+    connect(m_controllerWidgets[0], &DeltaWidget::masterSelected, this, [&controller](double value) {
+      if (value > 0) {
+        controller->fixSetValue(true);
+        controller->setSetValue(value);
+      } else {
+        controller->fixSetValue(false);
+      }
+    });
+    connect(m_controllerWidgets[0], &DeltaWidget::setValueChanged, controller, &DeltaWidget::setSetValue);
   }
   controlWidgetLay->addWidget(m_startBtn);
   controlWidgetLay->addWidget(m_stopBtn);
@@ -101,6 +119,9 @@ void MainWindow::initGui() {
   setGeometry(geometry() + QMargins{0, 0, 300, 0});
 
   enableControlWidgets(false);
+
+  QString version = PROJECT_VER;
+  setWindowTitle("Testa Delta v" + version);
 
   /*
    * Setup menu.
@@ -158,6 +179,26 @@ void MainWindow::openSettings() {
 }
 
 void MainWindow::openData() {
+  auto binaryFullDirPath = QCoreApplication::applicationDirPath();
+  auto targetDir         = binaryFullDirPath + "/" + "data";
+  auto filePath          = QFileDialog::getOpenFileName(this, tr("Open Data"), targetDir, tr("data file (*.dat)"));
+  if (!filePath.isEmpty()) {
+    auto dataHolder = std::make_shared<DataHolder>(6);
+    auto plotWidget = new DataHolderPlotWidget();
+    plotWidget->setDataHolder(dataHolder);
+    if (0 > dataHolder->load(filePath)) {
+      QMessageBox::critical(
+        this, "Ошибка", "Открываемый файл повреждён или имеет неверный формат. Отображение невозможно.");
+      plotWidget->deleteLater();
+      return;
+    } else {
+      plotWidget->setSettings(Settings::getInstance().getSettingsMap().value("plotLines"));
+      plotWidget->setAttribute(Qt::WA_DeleteOnClose);
+      plotWidget->setWindowTitle(filePath);
+      plotWidget->show();
+      plotWidget->setMinimumSize(600,400);
+    }
+  }
 }
 
 void MainWindow::connectToDelta() {

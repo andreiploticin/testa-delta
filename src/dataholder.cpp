@@ -179,7 +179,7 @@ int DataHolder::loadData(QFile &file) {
     }
     file.close();
   } else {
-    return -1;
+    return -2;
   }
   return 0;
 }
