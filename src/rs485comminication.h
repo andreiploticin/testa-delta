@@ -22,7 +22,9 @@ public:
   int  getStatus() const override;
   int  getNumberOfControllers() const override;
   void setSettings(QVariant settings) override;
+  void makeCustomRequest(uint8_t address, uint16_t offset, uint8_t size) override;
 
+  void sendRegisters(uint8_t address, uint16_t offset, std::vector<uint16_t> registers) override;
   std::vector<std::pair<double, double>> getLastValues() override;
 
 private:
@@ -30,6 +32,7 @@ private:
 
   void                 makeRequest();
   void                 onReadReady();
+  void                 handleCustomRequest();
   void                 onErrorOccured(QModbusDevice::Error error);
   void                 setModbusState(QModbusDevice::State state);
   bool                 handleErrorLimitation{false};
@@ -41,5 +44,7 @@ private:
   QList<uint32_t>      m_addresses;
   QVariantMap          m_settings;
 };
+
+
 
 #endif // RS485COMMINICATION_H

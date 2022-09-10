@@ -77,6 +77,8 @@ set(SORCES
     src/calibrationwidget.cpp
     src/utils.h
     src/utils.cpp
+    src/pidwidget.h
+    src/pidwidget.cpp
 )
 
 configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)

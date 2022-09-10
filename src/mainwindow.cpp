@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-//#include <QThreadPool>
 #include "src/process.h"
 #include "src/settings.h"
 #include "src/settingsdialog.h"
@@ -169,7 +168,7 @@ void MainWindow::saveSetsAndCorrections() {
 }
 
 void MainWindow::openSettings() {
-  auto sd = new SettingsDialog(Settings::getInstance().getSettingsMap()["settings"].toMap(), this);
+  auto sd = new SettingsDialog(Settings::getInstance().getSettingsMap()["settings"].toMap(), m_communication, this);
 
   QObject::connect(sd, &SettingsDialog::saveSettings, [this](QVariantMap map) {
     Settings::getInstance().save(map, "settings");

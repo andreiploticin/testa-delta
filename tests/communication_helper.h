@@ -61,7 +61,17 @@ private:
 public:
   void closeConnection() override;
   void setSettings(QVariant settings) override;
+  void makeCustomRequest(uint8_t address, uint16_t offset, uint8_t size) override;
+  void sendRegisters(uint8_t address, uint16_t offset, std::vector<uint16_t> registers) override;
 };
+
+void TestCommunication::sendRegisters(uint8_t address, uint16_t offset, std::vector<uint16_t> registers)
+{
+}
+
+void TestCommunication::makeCustomRequest(uint8_t address, uint16_t offset, uint8_t size)
+{
+}
 
 void TestCommunication::closeConnection() {
 }

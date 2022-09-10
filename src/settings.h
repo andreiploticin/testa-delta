@@ -37,7 +37,7 @@ public:
       qInfo() << __PRETTY_FUNCTION__ << "Invalid settings format";
       return -1;
     }
-    return 1;
+    return 0;
   }
 };
 

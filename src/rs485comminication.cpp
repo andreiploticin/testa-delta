@@ -66,6 +66,12 @@ void Rs485Comminication::setSets(std::vector<double> newSets) {
   }
 }
 
+void Rs485Comminication::sendRegisters(uint8_t address, uint16_t offset, std::vector<uint16_t> registers) {
+  QList<uint16_t> list_regs{registers.cbegin(), registers.cend()};
+  QModbusDataUnit req{QModbusDataUnit::HoldingRegisters, offset, list_regs};
+  m_modbusDevice->sendWriteRequest(req, address);
+}
+
 void Rs485Comminication::stopAll() {
   // START CMD
   QModbusDataUnit req{QModbusDataUnit::HoldingRegisters, 0x103C, 1};
@@ -205,4 +211,39 @@ void Rs485Comminication::setSettings(QVariant settings) {
     m_addresses.push_back(item.toUInt());
     m_values.push_back({0, 0});
   }
+}
+
+void Rs485Comminication::makeCustomRequest(uint8_t address, uint16_t offset, uint8_t size) {
+  QModbusDataUnit req{QModbusDataUnit::HoldingRegisters, offset, size};
+  auto            replay = m_modbusDevice->sendReadRequest(req, address);
+  if (nullptr != replay) {
+    connect(replay, &QModbusReply::finished, this, &Rs485Comminication::handleCustomRequest);
+  }
+}
+
+void Rs485Comminication::handleCustomRequest() {
+  auto reply = qobject_cast<QModbusReply *>(sender());
+  if (nullptr == reply) {
+    return;
+  }
+
+  if (reply->error() == QModbusDevice::NoError) {
+    const QModbusDataUnit unit    = reply->result();
+    auto                  total   = unit.valueCount();
+    auto                  address = reply->serverAddress();
+    std::vector<uint16_t> values;
+
+    values.push_back(unit.startAddress());
+
+    for (qsizetype i = 0; i < total; ++i) {
+      values.push_back(unit.value(i));
+    }
+    if (total > 0) {
+      emit requestResult(address, values);
+    }
+
+  } else {
+    onErrorOccured(reply->error());
+  }
+  reply->deleteLater();
 }

@@ -29,17 +29,22 @@ public:
     //    emit disconnected();
   }
 
-  virtual int                                    establishConnection(CommunicationSetupOptions const &options) = 0;
-  virtual void                                   closeConnection()                                             = 0;
-  virtual void                                   setSets(std::vector<double> newSets)                          = 0;
-  virtual void                                   stopAll()                                                     = 0;
-  virtual int                                    getStatus() const                                             = 0;
-  virtual std::vector<std::pair<double, double>> getLastValues()                                               = 0;
-  virtual int                                    getNumberOfControllers() const                                = 0;
-  virtual void                                   setSettings(QVariant settings)                                = 0;
+  virtual int  establishConnection(CommunicationSetupOptions const &options) = 0;
+  virtual void closeConnection()                                             = 0;
+  virtual void setSets(std::vector<double> newSets)                          = 0;
+  virtual void stopAll()                                                     = 0;
+  virtual int  getStatus() const                                             = 0;
+  virtual int  getNumberOfControllers() const                                = 0;
+  virtual void setSettings(QVariant settings)                                = 0;
+
+  virtual std::vector<std::pair<double, double>> getLastValues() = 0;
+
+  virtual void makeCustomRequest(uint8_t address, uint16_t offset, uint8_t size)                = 0;
+  virtual void sendRegisters(uint8_t address, uint16_t offset, std::vector<uint16_t> registers) = 0;
 
 signals:
   void connectedChanged(bool);
+  void requestResult(uint8_t, std::vector<uint16_t>);
 
 protected:
   bool                                      m_connectedStatus{false};

@@ -2,7 +2,8 @@
 
 #include <QLayout>
 
-SettingsDialog::SettingsDialog(QVariantMap settings, QWidget *parent) : QDialog{parent, Qt::Dialog} {
+SettingsDialog::SettingsDialog(QVariantMap settings, std::shared_ptr<ICommunication> communication, QWidget *parent)
+    : QDialog{parent, Qt::Dialog}, m_communication{communication} {
   setWindowTitle("Настройки");
 
   m_calWidget       = new CalibrationWidget(this);
@@ -17,13 +18,15 @@ SettingsDialog::SettingsDialog(QVariantMap settings, QWidget *parent) : QDialog{
   m_saveBtn         = new QPushButton("Сохранить", this);
   m_closeBtn        = new QPushButton("Закрыть", this);
 
-  auto mainLay = new QVBoxLayout(this);
+  auto mainLay = new QHBoxLayout(this);
+
+  auto systemLay = new QVBoxLayout();
 
   auto formLay = new QFormLayout();
-  mainLay->addLayout(formLay);
+  systemLay->addLayout(formLay);
 
   formLay->addRow("COM-порт для соединения", m_comPort);
-  formLay->addRow("Адрес регулятора верней зоны", m_deltaAddress1);
+  formLay->addRow("Адрес регулятора верхней зоны", m_deltaAddress1);
   formLay->addRow("Адрес регулятора средней зоны", m_deltaAddress2);
   formLay->addRow("Адрес регулятора нижней зоны", m_deltaAddress3);
   formLay->addRow("Частота сохранения данных, сек", m_acqFreq);
@@ -31,13 +34,27 @@ SettingsDialog::SettingsDialog(QVariantMap settings, QWidget *parent) : QDialog{
   formLay->addRow("Допустимое число ошибок соединения", m_errorMax);
   formLay->addRow("Допустимое число ошибок соединения по таймауту", m_timeoutMax);
 
-  mainLay->addWidget(m_calWidget);
+  systemLay->addWidget(m_calWidget);
 
   auto btnLay = new QHBoxLayout();
-  mainLay->addLayout(btnLay);
+  systemLay->addLayout(btnLay);
 
   btnLay->addWidget(m_saveBtn);
   btnLay->addWidget(m_closeBtn);
+
+  auto pidLay = new QVBoxLayout();
+  m_pid1      = new PidWidget("Настройки регулятора верхней зоны");
+  m_pid2      = new PidWidget("Настройки регулятора средней зоны");
+  m_pid3      = new PidWidget("Настройки регулятора нижней зоны");
+
+  pidLay->addWidget(m_pid1);
+  pidLay->addStretch();
+  pidLay->addWidget(m_pid2);
+  pidLay->addStretch();
+  pidLay->addWidget(m_pid3);
+
+  mainLay->addLayout(systemLay);
+  mainLay->addLayout(pidLay);
 
   connect(m_closeBtn, &QPushButton::clicked, this, &QDialog::reject);
   connect(m_saveBtn, &QPushButton::clicked, this, [this]() {
@@ -47,6 +64,18 @@ SettingsDialog::SettingsDialog(QVariantMap settings, QWidget *parent) : QDialog{
   if (!settings.empty()) {
     setVariant(settings);
   }
+
+  connect(m_communication.get(), &ICommunication::requestResult, this, &SettingsDialog::handleCommunicationRequest);
+
+  connect(m_pid1, &PidWidget::getFromController, this, [this]() {
+    m_communication->makeCustomRequest(m_pid1->getAddress(), 0x1007, 5);
+  });
+  connect(m_pid2, &PidWidget::getFromController, this, [this]() {
+    m_communication->makeCustomRequest(m_pid2->getAddress(), 0x1007, 5);
+  });
+  connect(m_pid3, &PidWidget::getFromController, this, [this]() {
+    m_communication->makeCustomRequest(m_pid3->getAddress(), 0x1007, 5);
+  });
 }
 
 void SettingsDialog::setVariant(QVariantMap settings) {
@@ -57,12 +86,15 @@ void SettingsDialog::setVariant(QVariantMap settings) {
       auto delta_address_list = delta_address.toList();
       if (delta_address_list.size() > 0) {
         m_deltaAddress1->setText(QString::number(delta_address_list[0].toUInt()));
+        m_pid1->setAddress(delta_address_list[0].toUInt());
       }
       if (delta_address_list.size() > 1) {
         m_deltaAddress2->setText(QString::number(delta_address_list[1].toUInt()));
+        m_pid2->setAddress(delta_address_list[0].toUInt());
       }
       if (delta_address_list.size() > 2) {
         m_deltaAddress3->setText(QString::number(delta_address_list[2].toUInt()));
+        m_pid3->setAddress(delta_address_list[0].toUInt());
       }
     }
     if (communication.contains("max_timeout_errors")) {
@@ -90,6 +122,18 @@ void SettingsDialog::setVariant(QVariantMap settings) {
   }
   if (settings.contains("calibration")) {
     m_calWidget->setData(settings["calibration"].toList());
+  }
+}
+
+void SettingsDialog::handleCommunicationRequest(uint8_t addsress, std::vector<uint16_t> registers) {
+  if (registers.size() < 6) {
+    return;
+  }
+  QVector<uint8_t> currAddresses{m_pid1->getAddress(), m_pid2->getAddress(), m_pid3->getAddress()};
+
+  if (currAddresses.contains(addsress)) {
+    QList<PidWidget *> list = {m_pid1, m_pid2, m_pid3};
+    list[currAddresses.indexOf(addsress)]->setRegisters(registers);
   }
 }
 
