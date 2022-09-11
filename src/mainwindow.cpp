@@ -1,9 +1,12 @@
 #include "mainwindow.h"
+
+#include <QApplication>
+
+#include "config.h"
 #include "src/process.h"
 #include "src/settings.h"
 #include "src/settingsdialog.h"
 #include "src/utils.h"
-#include "config.h"
 
 MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *parent)
     : QMainWindow{parent}, m_communication(std::move(communication)) {
@@ -71,7 +74,7 @@ void MainWindow::initGui() {
   auto controlWidgetLay = new QVBoxLayout();
   controlWidgetLay->setContentsMargins(0, 0, 0, 0);
   m_controlWidget->setLayout(controlWidgetLay);
-  m_controlWidget->setMaximumWidth(300);
+  m_controlWidget->setMaximumWidth(400);
 
   m_statusLabel = new QLabel("Статус: ", this);
 
@@ -132,6 +135,10 @@ void MainWindow::initGui() {
   connect(m_openDataAction, &QAction::triggered, this, &MainWindow::openData);
   m_connectAction = menu->addAction("Подключиться");
   connect(m_connectAction, &QAction::triggered, this, &MainWindow::connectToDelta);
+
+  QFont font = menuBar()->font();
+  font.setPointSize(Settings::getInstance().getFontSize());
+  QApplication::setFont(font, "QWidget");
 }
 
 void MainWindow::enableControlWidgets(bool value) {
@@ -172,6 +179,9 @@ void MainWindow::openSettings() {
 
   QObject::connect(sd, &SettingsDialog::saveSettings, [this](QVariantMap map) {
     Settings::getInstance().save(map, "settings");
+    QFont font = menuBar()->font();
+    font.setPointSize(Settings::getInstance().getFontSize());
+    QApplication::setFont(font, "QWidget");
   });
 
   sd->exec();
@@ -195,7 +205,7 @@ void MainWindow::openData() {
       plotWidget->setAttribute(Qt::WA_DeleteOnClose);
       plotWidget->setWindowTitle(filePath);
       plotWidget->show();
-      plotWidget->setMinimumSize(600,400);
+      plotWidget->setMinimumSize(600, 400);
     }
   }
 }

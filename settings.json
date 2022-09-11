@@ -3,17 +3,17 @@
         {
             "correction": 0.2,
             "label": "Верхняя зона",
-            "set": 1290
+            "set": 500
         },
         {
             "correction": 0.1,
             "label": "Средняя зона",
-            "set": 1290
+            "set": 500
         },
         {
             "correction": 0,
             "label": "Нижняя зона",
-            "set": 1290
+            "set": 500
         }
     ],
     "plotLines": [
@@ -125,6 +125,7 @@
             "max_timeout_errors": 3,
             "serial_port": "COM5"
         },
-        "data_acquisition_frequency": 1
+        "data_acquisition_frequency": 1,
+        "font_size": 13
     }
 }

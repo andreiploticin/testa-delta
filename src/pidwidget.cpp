@@ -18,7 +18,7 @@ PidWidget::PidWidget(QString const &title, QWidget *parent) : QGroupBox{title, p
 
   paramLay->addRow("PB Proportional band [0.1~999.9]", m_p);
   paramLay->addRow("Ti Integral time [0~9999]", m_i);
-  paramLay->addRow("PB Proportional band [0~9999]", m_d);
+  paramLay->addRow("Td Derivative time [0~9999]", m_d);
   paramLay->addRow("Control cycle, s [0.1~99]", m_period);
 
   mainLay->addLayout(paramLay);

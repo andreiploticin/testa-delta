@@ -60,6 +60,13 @@ public:
     return m_settingsMap;
   }
 
+  int getFontSize() const {
+    if (m_settingsMap.contains("settings") && m_settingsMap["settings"].toMap().contains("font_size")) {
+      return m_settingsMap["settings"].toMap()["font_size"].toInt();
+    }
+    return 10;
+  }
+
 protected:
   QVariantMap m_settingsMap;
 

@@ -6,6 +6,7 @@
 #include <QFormLayout>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QtSerialPort/QSerialPortInfo>
 #include <src/pidwidget.h>
 
@@ -36,6 +37,7 @@ private:
   QLineEdit         *m_errorMax;
   QLineEdit         *m_acqFreq;
   QLineEdit         *m_autosaveMinutes;
+  QSpinBox          *m_fontSize;
   QComboBox         *m_comPort;
   QPushButton       *m_saveBtn;
   QPushButton       *m_closeBtn;

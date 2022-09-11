@@ -1,5 +1,4 @@
 #include "settings.h"
-
 #include <QJsonDocument>
 Settings::Settings(QObject *parent) : QObject{parent} {
   qInfo() << __PRETTY_FUNCTION__;
@@ -42,8 +41,6 @@ void Settings::load() {
   // json -> variant
   auto doc      = QJsonDocument::fromJson(rawData);
   m_settingsMap = doc.toVariant().toMap();
-
-  qDebug() << m_settingsMap;
 }
 
 void Settings::save() {
@@ -52,7 +49,7 @@ void Settings::save() {
     return;
   }
 
-  if (!SettingsFileIO::saveToFile(m_filePath, QJsonDocument::fromVariant(m_settingsMap).toJson())) {
+  if (SettingsFileIO::saveToFile(m_filePath, QJsonDocument::fromVariant(m_settingsMap).toJson())) {
     qCritical() << "Can't save settings to file";
     return;
   }

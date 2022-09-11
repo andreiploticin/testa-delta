@@ -14,9 +14,13 @@ SettingsDialog::SettingsDialog(QVariantMap settings, std::shared_ptr<ICommunicat
   m_errorMax        = new QLineEdit("", this);
   m_acqFreq         = new QLineEdit("", this);
   m_autosaveMinutes = new QLineEdit("", this);
+  m_fontSize        = new QSpinBox(this);
   m_comPort         = new QComboBox(this);
   m_saveBtn         = new QPushButton("Сохранить", this);
   m_closeBtn        = new QPushButton("Закрыть", this);
+
+  m_fontSize->setRange(8,20);
+  m_fontSize->setSingleStep(1);
 
   auto mainLay = new QHBoxLayout(this);
 
@@ -33,6 +37,7 @@ SettingsDialog::SettingsDialog(QVariantMap settings, std::shared_ptr<ICommunicat
   formLay->addRow("Частота автосохранения данных, мин", m_autosaveMinutes);
   formLay->addRow("Допустимое число ошибок соединения", m_errorMax);
   formLay->addRow("Допустимое число ошибок соединения по таймауту", m_timeoutMax);
+  formLay->addRow("Размер шрифта интерфейса, пт.", m_fontSize);
 
   systemLay->addWidget(m_calWidget);
 
@@ -123,6 +128,9 @@ void SettingsDialog::setVariant(QVariantMap settings) {
   if (settings.contains("calibration")) {
     m_calWidget->setData(settings["calibration"].toList());
   }
+  if (settings.contains("font_size")) {
+    m_fontSize->setValue(settings["font_size"].toInt());
+  }
 }
 
 void SettingsDialog::handleCommunicationRequest(uint8_t addsress, std::vector<uint16_t> registers) {
@@ -162,6 +170,7 @@ QVariantMap SettingsDialog::getSettings() const {
   settings["communication"] = communication;
 
   settings["data_acquisition_frequency"] = m_acqFreq->text().toUInt();
+  settings["font_size"]                  = m_fontSize->value();
   settings["autosave_period"]            = m_autosaveMinutes->text().toUInt();
   settings["calibration"]                = m_calWidget->getData();
 

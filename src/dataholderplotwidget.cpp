@@ -13,7 +13,7 @@ DataHolderPlotWidget::DataHolderPlotWidget(QWidget *parent) : QWidget{parent} {
   m_viewModeBtn->setFixedSize(100, 50);
   m_viewModeBtn->setIconSize(QSize(90, 45));
 
-  m_cursorBtn->setFixedSize(120, 50);
+  m_cursorBtn->setFixedSize(160, 50);
 
   mainLay->addLayout(btnLay);
   mainLay->addWidget(m_plot);
