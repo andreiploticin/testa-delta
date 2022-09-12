@@ -26,7 +26,7 @@ PidWidget::PidWidget(QString const &title, QWidget *parent) : QGroupBox{title, p
   mainLay->addWidget(getBtn);
 
   connect(sendBtn, &QPushButton::clicked, this, [this]() {
-    emit sendToController(m_address, getRegisters());
+    emit sendToController(m_address, 0x1007, getRegisters());
   });
   connect(getBtn, &QPushButton::clicked, this, &PidWidget::getFromController);
 }
@@ -55,9 +55,9 @@ void PidWidget::setRegisters(std::vector<uint16_t> registers) {
 std::vector<uint16_t> PidWidget::getRegisters() const {
   std::vector<uint16_t> ret{};
   ret.push_back(static_cast<uint16_t>(10 * m_period->text().toDouble()));
+  ret.push_back(static_cast<uint16_t>(10 * m_period->text().toDouble()));
   ret.push_back(static_cast<uint16_t>(10 * m_p->text().toDouble()));
-  ret.push_back(static_cast<uint16_t>(m_i->text().toUInt()));
-  ret.push_back(static_cast<uint16_t>(m_d->text().toUInt()));
-
+  ret.push_back(static_cast<uint16_t>(m_i->text().toDouble()));
+  ret.push_back(static_cast<uint16_t>(m_d->text().toDouble()));
   return ret;
 }

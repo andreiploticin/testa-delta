@@ -1,6 +1,7 @@
 #include "settingsdialog.h"
-
+#include "QSerialPortInfo"
 #include <QLayout>
+#include <QTimer>
 
 SettingsDialog::SettingsDialog(QVariantMap settings, std::shared_ptr<ICommunication> communication, QWidget *parent)
     : QDialog{parent, Qt::Dialog}, m_communication{communication} {
@@ -81,6 +82,14 @@ SettingsDialog::SettingsDialog(QVariantMap settings, std::shared_ptr<ICommunicat
   connect(m_pid3, &PidWidget::getFromController, this, [this]() {
     m_communication->makeCustomRequest(m_pid3->getAddress(), 0x1007, 5);
   });
+
+  connect(m_pid1, &PidWidget::sendToController, m_communication.get(), &ICommunication::sendRegisters);
+  connect(m_pid2, &PidWidget::sendToController, m_communication.get(), &ICommunication::sendRegisters);
+  connect(m_pid3, &PidWidget::sendToController, m_communication.get(), &ICommunication::sendRegisters);
+
+  QTimer::singleShot(100, [this](){m_communication->makeCustomRequest(m_pid1->getAddress(), 0x1007, 5);});
+  QTimer::singleShot(200, [this](){m_communication->makeCustomRequest(m_pid2->getAddress(), 0x1007, 5);});
+  QTimer::singleShot(300, [this](){m_communication->makeCustomRequest(m_pid3->getAddress(), 0x1007, 5);});
 }
 
 void SettingsDialog::setVariant(QVariantMap settings) {
@@ -95,11 +104,11 @@ void SettingsDialog::setVariant(QVariantMap settings) {
       }
       if (delta_address_list.size() > 1) {
         m_deltaAddress2->setText(QString::number(delta_address_list[1].toUInt()));
-        m_pid2->setAddress(delta_address_list[0].toUInt());
+        m_pid2->setAddress(delta_address_list[1].toUInt());
       }
       if (delta_address_list.size() > 2) {
         m_deltaAddress3->setText(QString::number(delta_address_list[2].toUInt()));
-        m_pid3->setAddress(delta_address_list[0].toUInt());
+        m_pid3->setAddress(delta_address_list[2].toUInt());
       }
     }
     if (communication.contains("max_timeout_errors")) {
@@ -111,6 +120,12 @@ void SettingsDialog::setVariant(QVariantMap settings) {
     if (communication.contains("serial_port")) {
       auto        curCom = communication["serial_port"].toString();
       QStringList coms{"COM1", "COM2", "COM3", "COM4", "COM5"};
+      for(auto & port : QSerialPortInfo::availablePorts()) {
+          auto portName = port.portName();
+          if (!coms.contains(portName)) {
+            coms.push_back(portName);
+          }
+      }
       if (!coms.contains(curCom)) {
         coms.push_back(curCom);
       }

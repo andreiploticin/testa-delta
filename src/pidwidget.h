@@ -23,7 +23,7 @@ public:
 
 signals:
   void getFromController();
-  void sendToController(uint8_t, std::vector<uint16_t>);
+  void sendToController(uint8_t, uint16_t ,std::vector<uint16_t>);
 
 private:
   uint8_t    m_address;

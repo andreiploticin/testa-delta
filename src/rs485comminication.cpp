@@ -69,7 +69,10 @@ void Rs485Comminication::setSets(std::vector<double> newSets) {
 void Rs485Comminication::sendRegisters(uint8_t address, uint16_t offset, std::vector<uint16_t> registers) {
   QList<uint16_t> list_regs{registers.cbegin(), registers.cend()};
   QModbusDataUnit req{QModbusDataUnit::HoldingRegisters, offset, list_regs};
-  m_modbusDevice->sendWriteRequest(req, address);
+  auto replay = m_modbusDevice->sendWriteRequest(req, address);
+  if (nullptr != replay) {
+    connect(replay, &QModbusReply::finished, this, &Rs485Comminication::handleCustomRequest);
+  }
 }
 
 void Rs485Comminication::stopAll() {
