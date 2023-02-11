@@ -7,7 +7,8 @@
 
 #include "settings.h"
 
-Rs485Comminication::Rs485Comminication(QObject *parent) : ICommunication(parent) {
+Rs485Comminication::Rs485Comminication(QObject *parent)
+    : ICommunication(parent) {
   m_values           = {};
   m_modbusDevice     = new QModbusRtuSerialClient(this);
   m_requestLoopTimer = new QTimer(this);
@@ -69,7 +70,7 @@ void Rs485Comminication::setSets(std::vector<double> newSets) {
 void Rs485Comminication::sendRegisters(uint8_t address, uint16_t offset, std::vector<uint16_t> registers) {
   QList<uint16_t> list_regs{registers.cbegin(), registers.cend()};
   QModbusDataUnit req{QModbusDataUnit::HoldingRegisters, offset, list_regs};
-  auto replay = m_modbusDevice->sendWriteRequest(req, address);
+  auto            replay = m_modbusDevice->sendWriteRequest(req, address);
   if (nullptr != replay) {
     connect(replay, &QModbusReply::finished, this, &Rs485Comminication::handleCustomRequest);
   }
@@ -90,9 +91,7 @@ int Rs485Comminication::getStatus() const {
   return static_cast<int>(QModbusDevice::State::ConnectedState == m_modbusState);
 }
 
-std::vector<std::pair<double, double>> Rs485Comminication::getLastValues() {
-  return m_values;
-}
+std::vector<std::pair<double, double>> Rs485Comminication::getLastValues() { return m_values; }
 
 void Rs485Comminication::onReadReady() {
   auto reply = qobject_cast<QModbusReply *>(sender());
@@ -196,9 +195,7 @@ void Rs485Comminication::setModbusState(QModbusDevice::State state) {
   }
 }
 
-int Rs485Comminication::getNumberOfControllers() const {
-  return m_addresses.size();
-}
+int Rs485Comminication::getNumberOfControllers() const { return m_addresses.size(); }
 
 void Rs485Comminication::setSettings(QVariant settings) {
   if (QModbusDevice::ConnectedState == m_modbusState) {
@@ -250,3 +247,6 @@ void Rs485Comminication::handleCustomRequest() {
   }
   reply->deleteLater();
 }
+void Rs485Comminication::setCorrections(std::vector<double> newCorrections) { m_corrections = newCorrections; }
+
+std::vector<double> Rs485Comminication::getCorrections() { return m_corrections; }

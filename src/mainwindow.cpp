@@ -9,7 +9,8 @@
 #include "src/utils.h"
 
 MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *parent)
-    : QMainWindow{parent}, m_communication(std::move(communication)) {
+    : QMainWindow{parent}
+    , m_communication(std::move(communication)) {
   m_process           = std::make_unique<Process>(m_communication);
   m_updateValuesTimer = new QTimer(this);
 
@@ -24,15 +25,20 @@ MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *p
   connect(m_startBtn, &QPushButton::clicked, this, [this] {
     if ((nullptr != m_process.get()) && (nullptr != m_communication.get()) && (1 == m_communication->getStatus())) {
       std::vector<double> newSets{};
+      std::vector<double> newCorrections{};
       auto correctionsList = Settings::getInstance().getSettingsMap()["settings"].toMap()["calibration"].toList();
 
       for (int i{0}; i < m_controllerWidgets.size(); ++i) {
         auto const &item       = m_controllerWidgets[i];
         auto        correction = utils::correction(item->getSetValue(), correctionsList[i].toMap());
         newSets.push_back(item->getSetValue() - correction);
+        newCorrections.push_back(correction);
       }
       qDebug() << newSets;
+      qDebug() << newCorrections;
 
+      // update corrections
+      m_communication->setCorrections(newCorrections);
       // process create dataHolder
       m_process->restart(newSets);
       // we work with created or old dataHolder
@@ -69,7 +75,7 @@ void MainWindow::initGui() {
   setCentralWidget(widget);
   auto mainLay = new QHBoxLayout(widget);
 
-  m_controlWidget       = new QFrame(this);
+  m_controlWidget = new QFrame(this);
   //  m_controlWidget->setContentsMargins(0,3,0,3);
   auto controlWidgetLay = new QVBoxLayout();
   controlWidgetLay->setContentsMargins(0, 0, 0, 0);
@@ -90,8 +96,8 @@ void MainWindow::initGui() {
   auto controllers = Settings::getInstance().getSettingsMap()["controllers"].toList();
   for (int i{0}; i < controllers.size(); ++i) {
     auto controller = controllers[i].toMap();
-    auto w          = new DeltaWidget(
-      this, controller["label"].toString(), controller["set"].toDouble(), controller["correction"].toDouble());
+    auto w          = new DeltaWidget(this, controller["label"].toString(), controller["set"].toDouble(),
+                                      controller["correction"].toDouble());
     if (0 == i) {
       w->enableMaster();
     } else {
@@ -196,8 +202,8 @@ void MainWindow::openData() {
     auto plotWidget = new DataHolderPlotWidget();
     plotWidget->setDataHolder(dataHolder);
     if (0 > dataHolder->load(filePath)) {
-      QMessageBox::critical(
-        this, "Ошибка", "Открываемый файл повреждён или имеет неверный формат. Отображение невозможно.");
+      QMessageBox::critical(this, "Ошибка",
+                            "Открываемый файл повреждён или имеет неверный формат. Отображение невозможно.");
       plotWidget->deleteLater();
       return;
     } else {
@@ -210,12 +216,9 @@ void MainWindow::openData() {
   }
 }
 
-void MainWindow::connectToDelta() {
-  m_communication->establishConnection(CommunicationSetupOptions{});
-}
+void MainWindow::connectToDelta() { m_communication->establishConnection(CommunicationSetupOptions{}); }
 
-MainWindow::~MainWindow() {
-}
+MainWindow::~MainWindow() {}
 
 void MainWindow::closeEvent(QCloseEvent *event) {
   saveSetsAndCorrections();

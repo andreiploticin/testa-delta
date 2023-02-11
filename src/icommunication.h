@@ -21,7 +21,8 @@ public:
   //  using TController         = typename Traits::ControllerType;
   //  using CommunicationStatus = std::pair<int, std::vector<int>>;
 
-  ICommunication(QObject *parent = nullptr) : QObject(parent) {
+  ICommunication(QObject *parent = nullptr)
+      : QObject(parent) {
     qInfo() << __PRETTY_FUNCTION__ << QThread::currentThread();
   }
   virtual ~ICommunication() {
@@ -32,12 +33,14 @@ public:
   virtual int  establishConnection(CommunicationSetupOptions const &options) = 0;
   virtual void closeConnection()                                             = 0;
   virtual void setSets(std::vector<double> newSets)                          = 0;
+  virtual void setCorrections(std::vector<double> newCorrections)            = 0;
   virtual void stopAll()                                                     = 0;
   virtual int  getStatus() const                                             = 0;
   virtual int  getNumberOfControllers() const                                = 0;
   virtual void setSettings(QVariant settings)                                = 0;
 
-  virtual std::vector<std::pair<double, double>> getLastValues() = 0;
+  virtual std::vector<std::pair<double, double>> getLastValues()  = 0;
+  virtual std::vector<double>                    getCorrections() = 0;
 
   virtual void makeCustomRequest(uint8_t address, uint16_t offset, uint8_t size)                = 0;
   virtual void sendRegisters(uint8_t address, uint16_t offset, std::vector<uint16_t> registers) = 0;

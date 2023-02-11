@@ -10,9 +10,9 @@
 int main(int argc, char **argv) {
   auto app = std::make_unique<QApplication>(argc, argv);
   qSetMessagePattern("%{function}(line %{line}): %{message}");
-  auto g_comm = std::make_shared<Rs485Comminication>();
-  auto      binaryFullDirPath    = QCoreApplication::applicationDirPath();
-  auto      settingsPath         = binaryFullDirPath + "/settings.json";
+  auto g_comm            = std::make_shared<Rs485Comminication>();
+  auto binaryFullDirPath = QCoreApplication::applicationDirPath();
+  auto settingsPath      = binaryFullDirPath + "/settings.json";
 
   Settings::getInstance().setFilePath(settingsPath);
   auto appWindow = std::make_unique<MainWindow>(g_comm);

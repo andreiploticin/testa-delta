@@ -3,7 +3,8 @@
 #include "dataholder.h"
 #include "settings.h"
 
-Process::Process(std::shared_ptr<ICommunication> com, QObject *parent) : IProcess(std::move(com), parent) {
+Process::Process(std::shared_ptr<ICommunication> com, QObject *parent)
+    : IProcess(std::move(com), parent) {
   qInfo() << __PRETTY_FUNCTION__ << QThread::currentThread();
 
   m_runTimer = new QTimer(this);
@@ -11,9 +12,11 @@ Process::Process(std::shared_ptr<ICommunication> com, QObject *parent) : IProces
     if (!m_stopRun && m_runStatus) {
       if ((nullptr != m_dataHolder.get()) && (nullptr != m_communication.get())) {
         auto            lastPointsPairs = m_communication->getLastValues();
+        auto            corrections     = m_communication->getCorrections();
         QVector<double> lastPointVector{};
-        for (auto const &pair : lastPointsPairs) {
-          lastPointVector.push_back(pair.first);
+        for (int i{0}; i < lastPointsPairs.size(); ++i) {
+          auto const &pair = lastPointsPairs[i];
+          lastPointVector.push_back(pair.first + corrections[i]);
           lastPointVector.push_back(pair.second);
         }
         m_dataHolder->addDataPoint(QDateTime::currentDateTime().toSecsSinceEpoch(), lastPointVector);
@@ -52,8 +55,7 @@ void Process::stop() {
   setRunStatus(false);
 }
 
-void Process::run() {
-}
+void Process::run() {}
 
 void Process::setRunStatus(bool value) {
   if (m_runStatus == value) {

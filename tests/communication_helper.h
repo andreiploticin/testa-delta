@@ -12,6 +12,10 @@ static std::uniform_real_distribution<double> distribution(-1, 1);
 class TestCommunication : public ICommunication {
   // ICommunication interface
 public:
+  void                setCorrections(std::vector<double> newCorrections) override;
+  std::vector<double> getCorrections() override;
+
+public:
   TestCommunication()
       : ICommunication() {
     m_values        = {{25, 25}, {24, 24}, {26, 26}};
@@ -53,6 +57,7 @@ private:
   double                                 Tconst     = 30;
   double                                 abientTemp = 25;
   std::vector<std::pair<double, double>> m_values;
+  std::vector<double>                    m_corrections;
   QTimer                                *m_updateTimer{nullptr};
   std::vector<double>                    m_sets{0, 0, 0};
   QTimer                                *m_tempCalcTimer{nullptr};
@@ -82,5 +87,8 @@ void TestCommunication::updateTemps() {
     }
   }
 }
+void TestCommunication::setCorrections(std::vector<double> newCorrections) { m_corrections = newCorrections; }
+
+std::vector<double> TestCommunication::getCorrections() { return m_corrections; }
 
 #endif // COMMUNICATION_HELPER_H
