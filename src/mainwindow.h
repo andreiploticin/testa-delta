@@ -33,13 +33,10 @@ private:
   void     openData();
   QAction *m_connectAction{nullptr};
   void     connectToDelta();
-//  QAction *m_openDataAction{nullptr};
-//  void     openData();
 
   std::shared_ptr<ICommunication> m_communication;
   std::unique_ptr<IProcess>       m_process;
   std::vector<DeltaWidget *>      m_controllerWidgets;
-  std::shared_ptr<DataHolder>     m_activeDataHolder;
   QTimer                         *m_updateValuesTimer{nullptr};
   QFrame                         *m_controlWidget{nullptr};
   QLabel                         *m_statusLabel{nullptr};

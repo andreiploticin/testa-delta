@@ -1,17 +1,14 @@
 {
     "controllers": [
         {
-            "correction": 0,
             "label": "Верхняя зона",
             "set": 300
         },
         {
-            "correction": 0,
             "label": "Средняя зона",
             "set": 300
         },
         {
-            "correction": 0,
             "label": "Нижняя зона",
             "set": 300
         }

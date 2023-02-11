@@ -22,7 +22,7 @@ public:
     }
   }
   double getSetValue() const {
-    return m_setTempEdit->text().toDouble() + m_correction->text().toDouble();
+    return m_setTempEdit->text().toDouble(); // + m_correction->text().toDouble()
   }
   QVariantMap getInfo() const;
   void        setSetValue(double value) {
@@ -38,14 +38,14 @@ signals:
   void setValueChanged(double);
 
 private:
-  double getSetValueNoCorrection() const {
-    return m_setTempEdit->text().toDouble();
-  }
+//  double getSetValueNoCorrection() const {
+//    return m_setTempEdit->text().toDouble();
+//  }
 
   QFormLayout      *m_mainLay{nullptr};
   QLineEdit        *m_setTempEdit{nullptr};
   QLineEdit        *m_curTemp{nullptr};
-  CorrectionWidget *m_correction{nullptr};
+//  CorrectionWidget *m_correction{nullptr};
   QCheckBox        *m_forAllCheck{nullptr};
 };
 
