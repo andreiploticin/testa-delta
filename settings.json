@@ -1,19 +1,19 @@
 {
     "controllers": [
         {
-            "correction": 0.2,
+            "correction": 0,
             "label": "Верхняя зона",
-            "set": 500
+            "set": 300
         },
         {
-            "correction": 0.1,
+            "correction": 0,
             "label": "Средняя зона",
-            "set": 500
+            "set": 300
         },
         {
             "correction": 0,
             "label": "Нижняя зона",
-            "set": 500
+            "set": 300
         }
     ],
     "plotLines": [
@@ -65,9 +65,9 @@
         "calibration": [
             {
                 "data_correct": [
-                    0,
-                    0,
-                    0,
+                    -0.2,
+                    0.4,
+                    0.1,
                     0,
                     0
                 ],
@@ -83,7 +83,7 @@
             {
                 "data_correct": [
                     0,
-                    0,
+                    1,
                     0,
                     0,
                     0
@@ -99,9 +99,9 @@
             },
             {
                 "data_correct": [
-                    0,
-                    0,
-                    0,
+                    0.1,
+                    -0.5,
+                    0.2,
                     0,
                     0
                 ],
@@ -126,6 +126,6 @@
             "serial_port": "COM5"
         },
         "data_acquisition_frequency": 1,
-        "font_size": 13
+        "font_size": 12
     }
 }
