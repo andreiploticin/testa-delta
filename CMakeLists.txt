@@ -34,8 +34,8 @@ include(windeployqt)
 # Enable GTest
 include(FetchContent)
 FetchContent_Declare(googletest
-    URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-)
+        URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+        )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
@@ -44,64 +44,66 @@ enable_testing()
 
 # ----------------- main app
 set(SORCES
-    content.qrc
-    src/icommunication.h
-    src/controller.h
-    src/idataholder.h
-    src/mainwindow.h
-    src/mainwindow.cpp
-    src/deltawidget.h
-    src/deltawidget.cpp
-    src/iprocess.h
-    src/process.h
-    src/process.cpp
-    src/dataholder.h
-    src/dataholder.cpp
-    src/dataholderplot.h
-    src/dataholderplot.cpp
-    src/dataholderplotwidget.h
-    src/dataholderplotwidget.cpp
-    src/common/filereader.h
-    src/common/filewriter.h
-    src/settings.h
-    src/settings.cpp
-    src/rs485comminication.h
-    src/rs485comminication.cpp
-    src/correctionwidget.h
-    src/correctionwidget.cpp
-    src/settingsdialog.h
-    src/settingsdialog.cpp
-    src/calibrationmodel.h
-    src/calibrationmodel.cpp
-    src/calibrationwidget.h
-    src/calibrationwidget.cpp
-    src/utils.h
-    src/utils.cpp
-    src/pidwidget.h
-    src/pidwidget.cpp
-)
+        content.qrc
+        src/icommunication.h
+        src/controller.h
+        src/idataholder.h
+        src/mainwindow.h
+        src/mainwindow.cpp
+        src/deltawidget.h
+        src/deltawidget.cpp
+        src/iprocess.h
+        src/process.h
+        src/process.cpp
+        src/dataholder.h
+        src/dataholder.cpp
+        src/dataholderplot.h
+        src/dataholderplot.cpp
+        src/dataholderplotwidget.h
+        src/dataholderplotwidget.cpp
+        src/common/filereader.h
+        src/common/filewriter.h
+        src/settings.h
+        src/settings.cpp
+        src/rs485comminication.h
+        src/rs485comminication.cpp
+        src/correctionwidget.h
+        src/correctionwidget.cpp
+        src/settingsdialog.h
+        src/settingsdialog.cpp
+        src/calibrationmodel.h
+        src/calibrationmodel.cpp
+        src/calibrationwidget.h
+        src/calibrationwidget.cpp
+        src/utils.h
+        src/utils.cpp
+        src/pidwidget.h
+        src/pidwidget.cpp
+        src/initialcorrectionwidget.h
+        src/initialcorrectionwidget.cpp
+        )
 
 configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 add_executable(${PROJECT_NAME}
-    ${SORCES}
-    src/main.cpp
-)
+        ${SORCES}
+        src/main.cpp
+        )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    Qt6::Core
-    Qt6::Widgets
-    Qt6::SerialPort
-    Qt6::SerialBus
-    qcustomplot
-    )
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::SerialPort
+        Qt6::SerialBus
+        qcustomplot
+        )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE QCUSTOMPLOT_USE_LIBRARY)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Qt6Core_INCLUDE_DIRS})
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    WIN32_EXECUTABLE ON
-)
+        WIN32_EXECUTABLE ON
+        )
 # ----------------- /main app
 
 ## ----------------- tests app
@@ -121,26 +123,26 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 # ----------------- tests with qt
 add_executable(tests
-    ${SORCES}
-    tests/test.cpp
-    tests/communication_helper.h
-)
+        ${SORCES}
+        tests/test.cpp
+        tests/communication_helper.h
+        )
 
 target_link_libraries(tests PRIVATE
-    Qt6::Core
-    Qt6::Widgets
-    Qt6::SerialPort
-    Qt6::SerialBus
-    gtest_main
-    qcustomplot
-    )
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::SerialPort
+        Qt6::SerialBus
+        gtest_main
+        qcustomplot
+        )
 
 target_compile_definitions(tests PRIVATE QCUSTOMPLOT_USE_LIBRARY)
 
 
 set_target_properties(tests PROPERTIES
-    WIN32_EXECUTABLE ON
-)
+        WIN32_EXECUTABLE ON
+        )
 
 #qt_finalize_executable(test)
 

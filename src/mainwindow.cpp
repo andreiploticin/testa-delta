@@ -22,35 +22,14 @@ MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *p
 
   connectToDelta();
 
-  connect(m_startBtn, &QPushButton::clicked, this, [this] {
-    if ((nullptr != m_process.get()) && (nullptr != m_communication.get()) && (1 == m_communication->getStatus())) {
-      std::vector<double> newSets{};
-      std::vector<double> newCorrections{};
-      auto correctionsList = Settings::getInstance().getSettingsMap()["settings"].toMap()["calibration"].toList();
-
-      for (int i{0}; i < m_controllerWidgets.size(); ++i) {
-        auto const &item       = m_controllerWidgets[i];
-        auto        correction = utils::correction(item->getSetValue(), correctionsList[i].toMap());
-        newSets.push_back(item->getSetValue() - correction);
-        newCorrections.push_back(correction);
-      }
-      qDebug() << newSets;
-      qDebug() << newCorrections;
-
-      // update corrections
-      m_communication->setCorrections(newCorrections);
-      // process create dataHolder
-      m_process->restart(newSets);
-      // we work with created or old dataHolder
-      m_plotWidget->setDataHolder(m_process->getDataHolderPtr());
-    }
+  connect(m_startBtn, &QPushButton::clicked, this, &MainWindow::sentNewSet);
+  connect(m_startBtn, &QPushButton::clicked, this, [this]() {
+    m_initCorrection->setActive(false);
   });
 
-  connect(m_stopBtn, &QPushButton::clicked, this, [this] {
-    if ((nullptr != m_process.get()) && (nullptr != m_communication.get()) && (1 == m_communication->getStatus())) {
-      m_process->stop();
-    }
-  });
+  connect(m_initCorrection, &InitialCorrectionWidget::newLowSet, this, &MainWindow::handleInitCorrectionChanges);
+
+  connect(m_stopBtn, &QPushButton::clicked, this, &MainWindow::handleStop);
 
   connect(m_process.get(), &IProcess::runStatusChanged, this, &MainWindow::handleProcessChanges);
 
@@ -84,10 +63,10 @@ void MainWindow::initGui() {
 
   m_statusLabel = new QLabel("Статус: ", this);
 
-  m_plotWidget = new DataHolderPlotWidget(m_controlWidget);
-
-  m_startBtn = new QPushButton("Пуск", this);
-  m_stopBtn  = new QPushButton("Остановка", this);
+  m_plotWidget     = new DataHolderPlotWidget(m_controlWidget);
+  m_initCorrection = new InitialCorrectionWidget();
+  m_startBtn       = new QPushButton("Пуск", this);
+  m_stopBtn        = new QPushButton("Остановка", this);
 
   mainLay->addWidget(m_controlWidget);
   mainLay->addWidget(m_plotWidget);
@@ -118,6 +97,7 @@ void MainWindow::initGui() {
     });
     connect(m_controllerWidgets[0], &DeltaWidget::setValueChanged, controller, &DeltaWidget::setSetValue);
   }
+  controlWidgetLay->addWidget(m_initCorrection);
   controlWidgetLay->addWidget(m_startBtn);
   controlWidgetLay->addWidget(m_stopBtn);
   controlWidgetLay->addStretch();
@@ -145,6 +125,43 @@ void MainWindow::initGui() {
   QFont font = menuBar()->font();
   font.setPointSize(Settings::getInstance().getFontSize());
   QApplication::setFont(font, "QWidget");
+}
+
+void MainWindow::handleInitCorrectionChanges(double correction) {
+  sentNewSet(correction);
+}
+
+void MainWindow::sentNewSet(double globalCorrection) {
+  if ((nullptr != m_process.get()) && (nullptr != m_communication.get()) && (1 == m_communication->getStatus())) {
+    std::vector<double> newSets{};
+    std::vector<double> newCorrections{};
+    auto correctionsList = Settings::getInstance().getSettingsMap()["settings"].toMap()["calibration"].toList();
+
+    for (int i{0}; i < m_controllerWidgets.size(); ++i) {
+      auto const &item = m_controllerWidgets[i];
+      // correct every set if global correction is set
+      double set        = (-10000 == globalCorrection) ? item->getSetValue() : item->getSetValue() - globalCorrection;
+      auto   correction = utils::correction(set, correctionsList[i].toMap());
+      newSets.push_back(set - correction);
+      newCorrections.push_back(correction);
+    }
+    qDebug() << newSets;
+    qDebug() << newCorrections;
+
+    // update corrections
+    m_communication->setCorrections(newCorrections);
+    // process create dataHolder
+    m_process->restart(newSets);
+    // we work with created or old dataHolder
+    m_plotWidget->setDataHolder(m_process->getDataHolderPtr());
+  }
+}
+
+void MainWindow::handleStop() {
+  if ((nullptr != m_process.get()) && (nullptr != m_communication.get()) && (1 == m_communication->getStatus())) {
+    m_process->stop();
+  }
+  m_initCorrection->setActive(false);
 }
 
 void MainWindow::enableControlWidgets(bool value) {
