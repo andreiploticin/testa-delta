@@ -31,8 +31,6 @@ private:
   void              initGui();
   void              buttonHandle();
   void              handleTimer();
-  double            m_correction{0};
-  double            m_duration{0};
   QLineEdit        *m_cor_edit{nullptr};
   QLineEdit        *m_dur_edit{nullptr};
   QPushButton      *m_button{nullptr};

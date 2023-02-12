@@ -13,14 +13,14 @@ InitialCorrectionWidget::InitialCorrectionWidget(QWidget *parent)
   m_default_Style = this->styleSheet();
 }
 
-void   InitialCorrectionWidget::setCorrection(double value) { m_correction = value; }
-void   InitialCorrectionWidget::setDuration(double minutes) { m_duration = minutes; }
-double InitialCorrectionWidget::getCorrection() { return m_correction; }
-double InitialCorrectionWidget::getDuration() { return m_duration; }
+void   InitialCorrectionWidget::setCorrection(double value) { m_cor_edit->setText(QString::number(value, 'f', 1)); }
+void   InitialCorrectionWidget::setDuration(double minutes) { m_dur_edit->setText(QString::number(minutes, 'f', 0)); }
+double InitialCorrectionWidget::getCorrection() { return m_cor_edit->text().toDouble(); }
+double InitialCorrectionWidget::getDuration() { return m_dur_edit->text().toDouble(); }
 void   InitialCorrectionWidget::initGui() {
     auto mainLay = new QGridLayout(this);
-    m_cor_edit   = new QLineEdit("not set", this);
-    m_dur_edit   = new QLineEdit("not set", this);
+    m_cor_edit   = new QLineEdit("0.0", this);
+    m_dur_edit   = new QLineEdit("10", this);
 
     m_doubleValidator = new QDoubleValidator(0.1, 300, 1, m_cor_edit);
     m_doubleValidator->setNotation(QDoubleValidator::StandardNotation);
@@ -49,7 +49,7 @@ void InitialCorrectionWidget::setActive(bool value) {
 
   if (m_inWork) {
     setStyleSheet("QGroupBox { background-color: rgba(245,245,50,128); }");
-    m_timer->start(1000 * 1 * m_dur_edit->text().toDouble());
+    m_timer->start(1000 * 60 * m_dur_edit->text().toDouble());
   } else {
     setStyleSheet(m_default_Style);
     m_timer->stop();

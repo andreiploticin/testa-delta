@@ -23,9 +23,7 @@ MainWindow::MainWindow(std::shared_ptr<ICommunication> communication, QWidget *p
   connectToDelta();
 
   connect(m_startBtn, &QPushButton::clicked, this, &MainWindow::sentNewSet);
-  connect(m_startBtn, &QPushButton::clicked, this, [this]() {
-    m_initCorrection->setActive(false);
-  });
+  connect(m_startBtn, &QPushButton::clicked, this, [this]() { m_initCorrection->setActive(false); });
 
   connect(m_initCorrection, &InitialCorrectionWidget::newLowSet, this, &MainWindow::handleInitCorrectionChanges);
 
@@ -65,8 +63,12 @@ void MainWindow::initGui() {
 
   m_plotWidget     = new DataHolderPlotWidget(m_controlWidget);
   m_initCorrection = new InitialCorrectionWidget();
-  m_startBtn       = new QPushButton("Пуск", this);
-  m_stopBtn        = new QPushButton("Остановка", this);
+  m_initCorrection->setCorrection(
+    Settings::getInstance().getSettingsMap()["temporary_correction"].toMap()["value"].toDouble());
+  m_initCorrection->setDuration(
+    Settings::getInstance().getSettingsMap()["temporary_correction"].toMap()["duration"].toDouble());
+  m_startBtn = new QPushButton("Пуск", this);
+  m_stopBtn  = new QPushButton("Остановка", this);
 
   mainLay->addWidget(m_controlWidget);
   mainLay->addWidget(m_plotWidget);
@@ -127,9 +129,7 @@ void MainWindow::initGui() {
   QApplication::setFont(font, "QWidget");
 }
 
-void MainWindow::handleInitCorrectionChanges(double correction) {
-  sentNewSet(correction);
-}
+void MainWindow::handleInitCorrectionChanges(double correction) { sentNewSet(correction); }
 
 void MainWindow::sentNewSet(double globalCorrection) {
   if ((nullptr != m_process.get()) && (nullptr != m_communication.get()) && (1 == m_communication->getStatus())) {
@@ -195,6 +195,11 @@ void MainWindow::saveSetsAndCorrections() {
     controllersList.push_back(item->getInfo());
   }
   Settings::getInstance().save(controllersList, "controllers");
+
+  QVariantMap initialCalibration{};
+  initialCalibration["value"]    = m_initCorrection->getCorrection();
+  initialCalibration["duration"] = m_initCorrection->getDuration();
+  Settings::getInstance().save(initialCalibration, "temporary_correction");
 }
 
 void MainWindow::openSettings() {

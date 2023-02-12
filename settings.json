@@ -124,5 +124,9 @@
         },
         "data_acquisition_frequency": 1,
         "font_size": 12
+    },
+    "temporary_correction": {
+        "duration": 20,
+        "value": 9.6
     }
 }

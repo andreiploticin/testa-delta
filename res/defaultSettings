@@ -127,5 +127,9 @@
             "serial_port": "COM5"
         },
         "data_acquisition_frequency": 1
+    },
+    "temporary_correction": {
+        "duration": 5,
+        "value": 15
     }
 }

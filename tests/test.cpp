@@ -37,7 +37,13 @@ protected:
 
 TEST_F(testBase, testApp) {
   auto g_testCommunication = std::make_shared<TestCommunication>();
-  Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
+
+  auto binaryFullDirPath = QCoreApplication::applicationDirPath();
+  auto settingsPath      = binaryFullDirPath + "/settings.json";
+  Settings::getInstance().setFilePath(settingsPath);
+
+//  Settings::getInstance().setFilePath("c:/dev/testa-delta/settings.json");
+
   auto appWindow = std::make_unique<MainWindow>(g_testCommunication);
   appWindow->show();
 
